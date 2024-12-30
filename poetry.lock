@@ -12,6 +12,16 @@ files = [
 ]
 
 [[package]]
+name = "antlr4-python3-runtime"
+version = "4.9.3"
+description = "ANTLR 4.9.3 runtime for Python 3.7"
+optional = false
+python-versions = "*"
+files = [
+    {file = "antlr4-python3-runtime-4.9.3.tar.gz", hash = "sha256:f224469b4168294902bb1efa80a8bf7855f24c99aef99cbefc1bcd3cce77881b"},
+]
+
+[[package]]
 name = "anyio"
 version = "4.7.0"
 description = "High level compatibility layer for multiple asynchronous event loop implementations"
@@ -370,31 +380,30 @@ files = [
 
 [[package]]
 name = "hydra-core"
-version = "1.4.0.dev1"
+version = "1.3.2"
 description = "A framework for elegantly configuring complex applications"
 optional = false
 python-versions = "*"
-files = []
-develop = false
+files = [
+    {file = "hydra-core-1.3.2.tar.gz", hash = "sha256:8a878ed67216997c3e9d88a8e72e7b4767e81af37afb4ea3334b269a4390a824"},
+    {file = "hydra_core-1.3.2-py3-none-any.whl", hash = "sha256:fa0238a9e31df3373b35b0bfb672c34cc92718d21f81311d8996a16de1141d8b"},
+]
 
 [package.dependencies]
-omegaconf = ">=2.4.0.dev2"
+antlr4-python3-runtime = "==4.9.*"
+omegaconf = ">=2.2,<2.4"
 packaging = "*"
 
-[package.source]
-type = "git"
-url = "https://github.com/AaronYoung5/hydra.git"
-reference = "HEAD"
-resolved_reference = "d18706674b85fde1164cfc90a6c3cbde9f5fd24b"
-
 [[package]]
-name = "hydra_zen"
-version = "0.13.1rc1.post1.dev46+g0143e1a9"
+name = "hydra-zen"
+version = "0.13.0"
 description = "Configurable, reproducible, and scalable workflows in Python, via Hydra"
 optional = false
 python-versions = ">=3.8"
-files = []
-develop = false
+files = [
+    {file = "hydra_zen-0.13.0-py3-none-any.whl", hash = "sha256:6050b62be96d2a47b2abf0e9c0ebcce1e9a4e259e173870338ab049b833f26cf"},
+    {file = "hydra_zen-0.13.0.tar.gz", hash = "sha256:1b53d74aa1f0baa04fafdac6aba7a94ae40929e7b0a5a5081d8740f74322052d"},
+]
 
 [package.dependencies]
 hydra-core = ">=1.2.0"
@@ -405,12 +414,6 @@ typing-extensions = ">=4.1.0,<4.6.0 || >4.6.0"
 beartype = ["beartype (>=0.8.0)"]
 pydantic = ["pydantic (>=1.10.14,<2.0.0)"]
 test = ["hypothesis (>=6.28.0)", "pytest (>=3.8)", "pytest-trio (>=0.8.0)"]
-
-[package.source]
-type = "git"
-url = "https://github.com/mit-ll-responsible-ai/hydra-zen.git"
-reference = "HEAD"
-resolved_reference = "312ef311a8e42f0dcd59461fcc6ecdf1bd35ad4c"
 
 [[package]]
 name = "identify"
@@ -678,21 +681,18 @@ files = [
 
 [[package]]
 name = "omegaconf"
-version = "2.4.0.dev3"
+version = "2.3.0"
 description = "A flexible configuration library"
 optional = false
-python-versions = ">=3.8"
-files = []
-develop = false
+python-versions = ">=3.6"
+files = [
+    {file = "omegaconf-2.3.0-py3-none-any.whl", hash = "sha256:7b4df175cdb08ba400f45cae3bdcae7ba8365db4d165fc65fd04b050ab63b46b"},
+    {file = "omegaconf-2.3.0.tar.gz", hash = "sha256:d5d4b6d29955cc50ad50c46dc269bcd92c6e00f5f90d23ab5fee7bfca4ba4cc7"},
+]
 
 [package.dependencies]
+antlr4-python3-runtime = "==4.9.*"
 PyYAML = ">=5.1.0"
-
-[package.source]
-type = "git"
-url = "https://github.com/omry/omegaconf.git"
-reference = "HEAD"
-resolved_reference = "6f9656bf091f6cb1ebfe22c926e60e1c9d25ca02"
 
 [[package]]
 name = "packaging"
@@ -1468,4 +1468,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.13"
-content-hash = "d8451b1de8fc454c12d76d1f1889b47ffa924e79c45541a547a95ca17bce7012"
+content-hash = "47b39127e3e4ed0db2f45d7659c38e095dc63e40dcc5f092a53293ee69a2a951"
