@@ -1,0 +1,645 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../../../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../../../genindex.html" /><link rel="search" title="Search" href="../../../../search.html" /><link rel="next" title="Contributing" href="../../../../contributing.html" /><link rel="prev" title="hydra_config.resolvers" href="../resolvers/index.html" />
+
+    <link rel="shortcut icon" href="../../../../_static/doc.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2024.08.06 -->
+        <title>hydra_config.utils - hydra-config 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=649a27d8" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=302659d7" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=40ab5f34" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f0f0f0;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+<div class="announcement">
+  <aside class="announcement-content">
+     
+        <a style="text-decoration: none; color: white;"
+           href="https://AaronYoung5.github.io">
+           Check out my other projects!
+        </a>
+     
+  </aside>
+</div>
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../../index.html"><div class="brand">hydra-config 0.0.0 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo only-light" src="../../../../_static/doc.png" alt="Light Logo"/>
+    <img class="sidebar-logo only-dark" src="../../../../_static/doc.png" alt="Dark Logo"/>
+  </div>
+  
+  
+</a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../index.html">Home</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../usage/index.html">Usage</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Usage</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../examples/index.html">Examples</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Examples</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../../../index.html">API Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of API Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 current has-children"><a class="reference internal" href="../index.html">hydra_config</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of hydra_config</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../config/index.html">hydra_config.config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../resolvers/index.html">hydra_config.resolvers</a></li>
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">hydra_config.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">External Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/ACI/">PyPI</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/camera-culture/ACI">Github</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="../../../../_sources/reference/api/hydra_config/utils/index.rst.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="module-hydra_config.utils">
+<span id="hydra-config-utils"></span><h1>hydra_config.utils<a class="headerlink" href="#module-hydra_config.utils" title="Link to this heading">¶</a></h1>
+<p>This module contains utility functions for use with Hydra.</p>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#hydra_config.utils.HydraFlagWrapperMeta" title="hydra_config.utils.HydraFlagWrapperMeta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HydraFlagWrapperMeta</span></code></a></p></td>
+<td><p>This is a simple metaclass to allow for the use of the | operator to combine</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#hydra_config.utils.run_hydra" title="hydra_config.utils.run_hydra"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_hydra</span></code></a>([main_fn, parser, config_path, config_name, ...])</p></td>
+<td><p>This function is the main entry point for the hydra application.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#hydra_config.utils.safe_eval" title="hydra_config.utils.safe_eval"><code class="xref py py-obj docutils literal notranslate"><span class="pre">safe_eval</span></code></a>(src[, additional_vars])</p></td>
+<td><p>Evaluate a string containing a Python expression in a safe manner.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#hydra_config.utils.glob" title="hydra_config.utils.glob"><code class="xref py py-obj docutils literal notranslate"><span class="pre">glob</span></code></a>(key, flattened, _root_)</p></td>
+<td><p>This resolver will glob a key in the config. This is useful for finding all keys</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#hydra_config.utils.merge_with_kwargs" title="hydra_config.utils.merge_with_kwargs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">merge_with_kwargs</span></code></a>(config, *[, instantiate])</p></td>
+<td><p>This method will merge the kwargs into the config. This is useful for merging</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#hydra_config.utils.instance_wrapper" title="hydra_config.utils.instance_wrapper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">instance_wrapper</span></code></a>(*, instance[, key, locate, eval, setitem])</p></td>
+<td><p>Wraps a class instance to allow setting class attributes after initialization.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="hydra_config.utils.run_hydra">
+<span class="sig-name descname"><span class="pre">run_hydra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">main_fn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">lambda</span> <span class="pre">*_,</span> <span class="pre">**__:</span> <span class="pre">...</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parser</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">argparse.ArgumentParser()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Path.cwd()</span> <span class="pre">/</span> <span class="pre">'configs'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'base'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instantiate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/hydra_config/utils.html#run_hydra"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydra_config.utils.run_hydra" title="Link to this definition">¶</a></dt>
+<dd><p>This function is the main entry point for the hydra application.</p>
+<p>The benefits of using this setup rather than the compose API is that we can
+use the sweeper and launcher APIs, which are not available in the compose API.</p>
+<p>An additional <code class="docutils literal notranslate"><span class="pre">--hydra-help</span></code> flag is added to the parser to print the hydra help
+message when passed.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>main_fn</strong> (<em>Callable[[Concatenate[[HydraContainerConfig], …], None]</em>) – The
+main function to be called after the hydra configuration is parsed. It
+should take the config as an argument and kwargs which correspond to the
+argument parser returns. We don’t return the config directly because hydra
+allows multi-run sweeps and it doesn’t make sense to return multiple
+configs in this case.</p>
+<p>Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="n">HydraContainerConfig</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--verbose&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">run_hydra</span><span class="p">(</span><span class="n">main_fn</span><span class="o">=</span><span class="n">main</span><span class="p">,</span> <span class="n">parser</span><span class="o">=</span><span class="n">parser</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Keyword Arguments<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>parser</strong> (<em>argparse.ArgumentParser</em>) – The parser to use for the hydra
+application. If None, a new parser will be created.</p></li>
+<li><p><strong>config_path</strong> (<em>Path</em><em> | </em><em>str</em>) – The path to the config directory. This should be the
+absolute path to the directory containing the config files. By default,
+this is set to the current working directory.</p></li>
+<li><p><strong>config_name</strong> (<em>str</em>) – The name of the config file to use. This should be the
+name of the file without the extension. By default, this is set to
+“base”.</p></li>
+<li><p><strong>instantiate</strong> (<em>bool</em>) – Whether to instantiate the config. If False, create
+will be used.</p></li>
+<li><p><strong>kwargs</strong> – Additional keyword arguments to pass to the instantiate function.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="hydra_config.utils.safe_eval">
+<span class="sig-name descname"><span class="pre">safe_eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">additional_vars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/hydra_config/utils.html#safe_eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydra_config.utils.safe_eval" title="Link to this definition">¶</a></dt>
+<dd><p>Evaluate a string containing a Python expression in a safe manner.</p>
+<p>This function uses
+<a class="reference external" href="https://restrictedpython.readthedocs.io/en/latest/">RestrictedPython</a> to evaluate
+the expression, only allowing certain built-in functions and types, and any
+additional variables provided. It prevents execution of arbitrary code or access to
+unauthorized functions and methods.</p>
+<p>A number of built-in functions are supported, as provided by <code class="docutils literal notranslate"><span class="pre">utility_builtins</span></code>,
+<code class="docutils literal notranslate"><span class="pre">safe_builtins</span></code>, and <code class="docutils literal notranslate"><span class="pre">limited_builtins</span></code> from
+<a class="reference external" href="https://restrictedpython.readthedocs.io/en/latest/usage/api.html#restricted-builtins">here</a>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul>
+<li><p><strong>src</strong> (<em>str</em>) – The source code to evaluate.</p></li>
+<li><p><strong>additional_vars</strong> (<em>Dict[str, Any]</em>) – A dictionary of additional variables or
+functions to include in the evaluation environment.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This can be unsafe if the variables are not properly sanitized, thus
+<code class="docutils literal notranslate"><span class="pre">additional_vars</span></code> should be used with caution.</p>
+</div>
+</li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em> – The result of the evaluated expression.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">safe_eval</span><span class="p">(</span><span class="s2">&quot;1 + 2&quot;</span><span class="p">)</span>
+<span class="go">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">safe_eval</span><span class="p">(</span><span class="s2">&quot;max([1, 2, 3])&quot;</span><span class="p">)</span>
+<span class="go">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">safe_eval</span><span class="p">(</span><span class="s2">&quot;math.sqrt(a)&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">})</span>
+<span class="go">4.0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="hydra_config.utils.glob">
+<span class="sig-name descname"><span class="pre">glob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flattened</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_root_</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/hydra_config/utils.html#glob"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydra_config.utils.glob" title="Link to this definition">¶</a></dt>
+<dd><p>This resolver will glob a key in the config. This is useful for finding all keys
+that match a pattern. This is particularly useful for finding all keys that match a
+pattern in a nested config. This is effectively select, but allows <code class="docutils literal notranslate"><span class="pre">*</span></code> to be used
+as a wildcard.</p>
+<p>This method works by finding all <code class="docutils literal notranslate"><span class="pre">*</span></code> in the key and then iterating over all
+subsequent keys that match the globbed pattern.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>yaml files aren’t necessarily built to support globbing (like xml), so
+this method is fairly slow and should be used sparingly.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>List indexing is limited in support. To index an element in a list, you
+must use bracket notation. For instance, <code class="docutils literal notranslate"><span class="pre">a[0].b</span></code> is supported, but <code class="docutils literal notranslate"><span class="pre">a.0.b</span></code>
+is not.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em>) – The key to glob. This is a dotlist key, like <code class="docutils literal notranslate"><span class="pre">a.b.*</span></code>. Multiple
+globs can be used, like <code class="docutils literal notranslate"><span class="pre">a.*.c.*.d.*</span></code>. Globs in keys can be used, as
+well, such as <code class="docutils literal notranslate"><span class="pre">a.ab*.c</span></code></p></li>
+<li><p><strong>flatten</strong> (<em>bool</em>) – If true, the output will be a dict of the leaf keys and
+the accumulated values if there are like leaf keys. If False, the
+output will be a nested dict. Defaults to False.</p></li>
+<li><p><strong>_root_</strong> (<em>DictConfig</em>) – The root config.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="hydra_config.utils.merge_with_kwargs">
+<span class="sig-name descname"><span class="pre">merge_with_kwargs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instantiate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/hydra_config/utils.html#merge_with_kwargs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydra_config.utils.merge_with_kwargs" title="Link to this definition">¶</a></dt>
+<dd><p>This method will merge the kwargs into the config. This is useful for merging
+“late”, as in after the config has been resolved (not instantiated). By specifying
+the merge to happen at instantiation time rather than at resolution time, it gives
+more freedom in defining overrides within the config.</p>
+<p>This is intended to be called from a yaml config file like:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">config_to_merge_late</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">_target_</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;path_to&gt;.merge_with_kwargs</span>
+<span class="w">    </span><span class="nt">_recursive_</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
+<span class="w">    </span><span class="nt">config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${...}</span><span class="w"> </span><span class="c1"># this is what the kwargs are merged into</span>
+<span class="w">    </span><span class="nt">kwarg1</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">value1</span>
+<span class="w">    </span><span class="nt">kwarg2</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">value2</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You may want <code class="docutils literal notranslate"><span class="pre">_recursive_=False</span></code> (as above) to avoid instantiating the config
+before merging the kwargs. If you want to override a config attribute in the
+config object which is instantiated (i.e. is a partial), you won’t have access
+to the config attribute (only the partial object), so you would want
+<code class="docutils literal notranslate"><span class="pre">_recursive_=False</span></code>. Simpler cases can just use <code class="docutils literal notranslate"><span class="pre">_recursive_=True</span></code>.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config</strong> (<em>DictConfig</em>) – The config to merge the kwargs into.</p>
+</dd>
+<dt class="field-even">Keyword Arguments<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>kwargs</strong> – The kwargs to merge into the config.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="hydra_config.utils.instance_wrapper">
+<span class="sig-name descname"><span class="pre">instance_wrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">locate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">setitem</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/hydra_config/utils.html#instance_wrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydra_config.utils.instance_wrapper" title="Link to this definition">¶</a></dt>
+<dd><p>Wraps a class instance to allow setting class attributes after initialization.</p>
+<p>This utility is useful when not all attributes are available during class
+instantiation, allowing attributes to be set post-construction using either
+direct assignment, item setting, or attribute modification based on optional flags.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>instance</strong> (<em>Any</em>) – The class instance to wrap.</p></li>
+<li><p><strong>key</strong> (<em>Optional[str], optional</em>) – If provided, fetches the specified attribute
+from the instance to modify. Defaults to None.</p></li>
+<li><p><strong>locate</strong> (<em>bool, optional</em>) – If True, attempts to resolve attribute names
+dynamically (e.g., via object lookup). Defaults to False.</p></li>
+<li><p><strong>eval</strong> (<em>bool, optional</em>) – If True, evaluates attribute values using safe_eval
+before assignment. Defaults to False.</p></li>
+<li><p><strong>setitem</strong> (<em>bool, optional</em>) – If True, uses item assignment
+(e.g., <code class="docutils literal notranslate"><span class="pre">instance[key]</span></code>) instead of <code class="docutils literal notranslate"><span class="pre">setattr</span></code>. Defaults to False.</p></li>
+<li><p><strong>**kwargs</strong> – Key-value pairs of attributes to set on the instance.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Any</em> – The modified instance.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If there is an error while setting an attribute.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">obj_to_instantiate</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">_target_</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;path_to&gt;.instance_wrapper</span>
+<span class="w">    </span><span class="nt">instance</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">_target_</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;class&gt;</span>
+<span class="w">        </span><span class="nt">_args_</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">arg1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">arg2</span><span class="p p-Indicator">]</span>
+<span class="w">        </span><span class="nt">init_arg1</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">value1</span>
+<span class="w">        </span><span class="nt">init_arg2</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">value2</span>
+<span class="w">    </span><span class="nt">set_arg1</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">value1</span>
+<span class="w">    </span><span class="nt">set_arg2</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">value2</span>
+</pre></div>
+</div>
+<p>For partial instantiation:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">partial_obj_to_instantiate</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">_target_</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;path_to&gt;.instance_wrapper</span>
+<span class="w">    </span><span class="nt">instance</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">_target_</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;class&gt;</span>
+<span class="w">        </span><span class="nt">_partial_</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="w">        </span><span class="nt">_args_</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">arg1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">arg2</span><span class="p p-Indicator">]</span>
+<span class="w">        </span><span class="nt">init_arg3</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;???&#39;</span><span class="w"> </span><span class="c1"># Set later</span>
+<span class="w">    </span><span class="nt">set_arg1</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">value1</span>
+<span class="w">    </span><span class="nt">set_arg2</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">value2</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="hydra_config.utils.HydraFlagWrapperMeta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">HydraFlagWrapperMeta</span></span><a class="reference internal" href="../../../../_modules/hydra_config/utils.html#HydraFlagWrapperMeta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydra_config.utils.HydraFlagWrapperMeta" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">enum.EnumMeta</span></code></p>
+<p>This is a simple metaclass to allow for the use of the | operator to combine
+flags. This means you can simply put <code class="docutils literal notranslate"><span class="pre">flag1</span> <span class="pre">|</span> <span class="pre">flag2</span></code> in the yaml file and it will
+be combined into a single flag.</p>
+<p>The following forms are supported and any combination thereof:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">flag1</span> <span class="pre">|</span> <span class="pre">flag2</span> <span class="pre">|</span> <span class="pre">flag3</span> <span class="pre">|</span> <span class="pre">...</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">flag1|flag2|flag3|...</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">flag1</span></code></p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="hydra_config.utils.HydraFlagWrapperMeta.__getitem__">
+<span class="sig-name descname"><span class="pre">__getitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/hydra_config/utils.html#HydraFlagWrapperMeta.__getitem__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydra_config.utils.HydraFlagWrapperMeta.__getitem__" title="Link to this definition">¶</a></dt>
+<dd><p>This method allows for the use of the | operator to combine flags. This
+means you can simply put <code class="docutils literal notranslate"><span class="pre">flag1</span> <span class="pre">|</span> <span class="pre">flag2</span></code> in the yaml file and it will be
+combined into a single flag.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="../../../../contributing.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Contributing</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="../resolvers/index.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">hydra_config.resolvers</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2024, Aaron Young
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">hydra_config.utils</a><ul>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#hydra_config.utils.run_hydra"><code class="docutils literal notranslate"><span class="pre">run_hydra()</span></code></a></li>
+<li><a class="reference internal" href="#hydra_config.utils.safe_eval"><code class="docutils literal notranslate"><span class="pre">safe_eval()</span></code></a></li>
+<li><a class="reference internal" href="#hydra_config.utils.glob"><code class="docutils literal notranslate"><span class="pre">glob()</span></code></a></li>
+<li><a class="reference internal" href="#hydra_config.utils.merge_with_kwargs"><code class="docutils literal notranslate"><span class="pre">merge_with_kwargs()</span></code></a></li>
+<li><a class="reference internal" href="#hydra_config.utils.instance_wrapper"><code class="docutils literal notranslate"><span class="pre">instance_wrapper()</span></code></a></li>
+<li><a class="reference internal" href="#hydra_config.utils.HydraFlagWrapperMeta"><code class="docutils literal notranslate"><span class="pre">HydraFlagWrapperMeta</span></code></a><ul>
+<li><a class="reference internal" href="#hydra_config.utils.HydraFlagWrapperMeta.__getitem__"><code class="docutils literal notranslate"><span class="pre">HydraFlagWrapperMeta.__getitem__()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../../../../_static/documentation_options.js?v=7026087e"></script>
+    <script src="../../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/scripts/furo.js?v=5fa4622c"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    </body>
+</html>

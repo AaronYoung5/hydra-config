@@ -1,0 +1,152 @@
+hydra_config.resolvers
+======================
+
+.. py:module:: hydra_config.resolvers
+
+.. autoapi-nested-parse::
+
+   This module contains custom resolvers for OmegaConf.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   hydra_config.resolvers.register_new_resolver
+   hydra_config.resolvers.search_resolver
+   hydra_config.resolvers.parent_resolver
+   hydra_config.resolvers.eval_resolver
+   hydra_config.resolvers.glob_resolver
+   hydra_config.resolvers.hydra_select
+   hydra_config.resolvers.path_resolver
+   hydra_config.resolvers.read_resolver
+   hydra_config.resolvers.custom_resolver
+   hydra_config.resolvers.float_to_str_resolver
+   hydra_config.resolvers.locate_resolver
+   hydra_config.resolvers.getitem_resolver
+   hydra_config.resolvers.target_resolver
+   hydra_config.resolvers.instantiate_resolver
+
+
+Module Contents
+---------------
+
+.. py:function:: register_new_resolver(name, replace = True, **kwargs)
+
+   Register a new resolver with OmegaConf.
+
+   :Parameters: * **name** (*str*) -- The name of the resolver.
+                * **replace** (*bool*) -- Whether to replace the resolver if it already exists.
+                * **\*\*kwargs** -- Additional keyword arguments to pass to
+                  ``OmegaConf.register_new_resolver``.
+
+
+.. py:function:: search_resolver(key = None, /, mode = 'value', *, depth = 0, _parent_)
+
+   This method will recursively search up the parent chain for the key and return
+   the value. If the key is not found, will raise a KeyError.
+
+   For instance, a heavily nested value might want to access a value some level
+   higher but it may be hazardous to use relative paths (i.e. ${..key}) since
+   the config may be changed. Instead, we'll search up for a specific key to set the
+   value to. Helpful for setting unique names for an object in a nested config.
+
+   .. note:: This technically uses hidden attributes (i.e. _parent).
+
+   :Parameters: * **key** (*str | None*) -- The key to search for. Could be none (like when mode is
+                  "parent_key").
+                * **mode** (*Optional[str]*) -- The mode to use. Defaults to "value". Available modes:
+                  - "value": Will return the value of the found key. Key must be set.
+                  - "parent_key": Will return the parent's key. If key is None, won't do
+                  any recursion and will return the parent's key.
+                  - "path": Will return the path to the key.
+                * **depth** (*Optional[int]*) -- The depth of the search. Used internally
+                  in this method and unsettable from the config. Avoids checking the parent
+                  key.
+                * **_parent_** (*DictConfig*) -- The parent config to search in.
+
+
+.. py:function:: parent_resolver(key = None, mode = 'parent_key', *, _parent_)
+
+   This resolver is a wrapper around the search resolver with a default mode of
+   "parent_key". This will return the parent's key.
+
+
+.. py:function:: eval_resolver(key, /, *, _root_)
+
+   This resolver will evaluate the key as a python expression. This is useful for
+   evaluating `any` expression. The resolver calls
+   :meth:`~hydra_config.utils.safe_eval`, so only a (safe) subset of python is
+   available.
+
+
+.. py:function:: glob_resolver(pattern, config = None, /, *, _root_)
+
+   This resolver will return a list of keys that match the pattern. This is useful
+   for selecting a subset of keys in a config. The pattern should be a regex pattern.
+   If the config is a string, it will be treated as a dotpath to a config.
+
+
+.. py:function:: hydra_select(key, default = None, /, *, _root_)
+
+   This is similar to the regular hydra resolver, but this won't through an error
+   if the global hydra config is unset. Instead, it will return another interpolation
+   using dotpath notation directly. As in, ${hydra_select:runtime.choices.test}, if
+   HydraConfig is unset, will return ${hydra.runtime.choices.test}.
+
+
+.. py:function:: path_resolver(*parts)
+
+   Simple resolver to join paths together.
+
+
+.. py:function:: read_resolver(path)
+
+   Simple resolver to read a file.
+
+
+.. py:function:: custom_resolver(target, default = None, /)
+
+   This resolver is a wrapper around the select resolver to grab an entry in a
+   parent :attr:`~hydra_config.config.HydraContainerConfig.custom` field.
+
+
+.. py:function:: float_to_str_resolver(value)
+
+   This resolver will convert a float to a string. This is useful for saving
+   floats as strings in a config for a filename. All periods will be replaced with
+   'p' and all negatives will be replaced with 'n'; e.g. ``-0.5`` will be converted
+   to ``'n0p5'``.
+
+
+.. py:function:: locate_resolver(fn)
+
+   This resolver will locate an object using the :meth:`hydra.utils.get_object`
+   method.
+
+
+.. py:function:: getitem_resolver(obj, key)
+
+   This resolver will get an item from a list.
+
+
+.. py:function:: target_resolver(target, /, *args)
+
+   This is a resolver which serves as a proxy for the _target_ attribute used
+   in hydra. Basically :attr:`target` will be defined as ``_target_`` and the rest of
+   the attributes will be passed as arguments to the target. You should always
+   default to using ``_target_`` directly in your config, but because interpolations
+   `may` be resolved prior to or instead of instantiate, it may be desired to resolve
+   interpolations before instantiations.
+
+
+.. py:function:: instantiate_resolver(target, /, *args, _root_)
+
+   This resolver will instantiate a target using the HydraContainerConfig. If the
+   target is a string, it will be resolved using the target_resolver. If the target is
+   a DictConfig, it will be passed directly to the HydraContainerConfig.instantiate
+   method.
+
+
