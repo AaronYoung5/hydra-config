@@ -22,7 +22,7 @@ jobs:
 
       # Step 2: Fetch all history for all tags and branches
       - name: Fetch all history for all tags and branches
-        run: git fetch --prune --unshallow
+        run: git fetch --prune
 
       # Step 3: Set up Python environment
       - name: Set up Python

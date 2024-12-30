@@ -42,7 +42,7 @@ extensions = [
     "myst_parser",
     "sphinx_copybutton",
     "sphinxcontrib.video",
-    # "sphinxcontrib.googleanalytics",
+    "sphinxcontrib.googleanalytics",
 ]
 
 # autoapi config
@@ -96,7 +96,7 @@ todo_include_todos = True
 exclude_patterns = []
 
 # Google Analytics
-# googleanalytics_id = ""
+googleanalytics_id = "G-4SJ32LRS8B"
 
 
 # -- Options for HTML output -------------------------------------------------
