@@ -1,0 +1,74 @@
+[tool.poetry]
+name = "hydra-config"
+version = "0.0.0"
+authors = ["Aaron Young <aryoung@mit.edu>"]
+description = "Enhanced Hydra structured configs"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.13"
+pyyaml = "^6.0.2"
+RestrictedPython = "^7.4"
+
+hydra_zen = { git = "https://github.com/mit-ll-responsible-ai/hydra-zen.git" }
+omegaconf = { git = "https://github.com/omry/omegaconf.git" }
+hydra-core = { git = "https://github.com/AaronYoung5/hydra.git" }
+
+[tool.poetry.dev-dependencies]
+pip = "^24.2"
+black = "^24.8.0"
+flake8 = "^7.1.1"
+Flake8-pyproject = "^1.2.3"
+isort = "^5.13.2"
+pyright = "^1.1.381"
+pytest = "^8.3.3"
+pre-commit = "^3.8.0"
+RestrictedPython = "^7.4"
+
+[tool.poetry.group.docs.dependencies]
+sphinx = "7.2.6"
+furo = "2024.8.6"
+sphinx-autoapi = "3.4.0"
+sphinx-autobuild = "2024.10.3"
+sphinx-copybutton = "0.5.2"
+myst-parser = "4.0.0"
+sphinxcontrib-video = "0.3.1"
+sphinxcontrib-googleanalytics = "0.4"
+
+[tool.black]
+line-length = 88
+target-version = ['py312']
+
+[tool.pylint."messages control"]
+ignore = ["setup.py", "__init__.py"]
+disable = "all"
+enable = [
+    "empty-docstring",
+    "missing-class-docstring",
+    "missing-function-docstring",
+    "missing-module-docstring",
+]
+
+[tool.isort]
+profile = "black"
+known_first_party = ["cambrian"] # see package configuration below
+
+[tool.flake8]
+ignore = ['E203', 'W503']
+per-file-ignores = ['__init__.py:F401']
+max-line-length = 88
+count = true
+
+# [tool.pyright]
+# reportMissingTypeArgument = true # Report generic classes used without type arguments
+strictListInference = true # Use union types when inferring types of lists elements, instead of Any
+
+[tool.poetry-monorepo-dependency-plugin]
+enable = true
+
+[tool.setuptools_scm]
+write_to = "hydra_config/_version.py"
+
+[build-system]
+requires = ["poetry-core>=1.0.8"]
+build-backend = "poetry.core.masonry.api"

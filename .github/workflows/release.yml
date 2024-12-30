@@ -1,0 +1,55 @@
+name: Upload Python Package
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: [3.11, 3.12]
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      # Step 2: Fetch all history for all tags and branches
+      - name: Fetch all history for all tags and branches
+        run: git fetch --prune --unshallow
+
+      # Step 3: Set up Python environment
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # Step 4: Install Poetry
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: latest
+
+      # Step 5: Install dependencies using Poetry
+      - name: Install dependencies
+        run: |
+          poetry install --no-interaction --no-ansi
+
+      # Step 6: Build the package using Poetry
+      - name: Build package
+        run: |
+          poetry build
+
+      # Step 7: Publish the package to PyPI
+      - name: Publish package to PyPI
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+        run: |
+          poetry publish --username "$TWINE_USERNAME" --password "$TWINE_PASSWORD"
