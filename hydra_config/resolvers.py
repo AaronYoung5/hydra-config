@@ -204,12 +204,24 @@ def float_to_str_resolver(value: float) -> str:
 
 
 @register_new_resolver("locate")
-def locate_resolver(fn: str) -> Any:
+def locate_resolver(fn: str, /, cast_to: Optional[str] = None) -> Any:
     """This resolver will locate an object using the :meth:`hydra.utils.get_object`
     method."""
     from hydra.utils import get_object
 
-    return get_object(fn)
+    obj = get_object(fn)
+    if cast_to is not None:
+        if cast_to == "str":
+            return str(obj)
+        elif cast_to == "int":
+            return int(obj)
+        elif cast_to == "float":
+            return float(obj)
+        elif cast_to == "bool":
+            return bool(obj)
+        else:
+            raise ValueError(f"Invalid cast_to value: {cast_to}")
+    return obj
 
 
 @register_new_resolver("getitem")
