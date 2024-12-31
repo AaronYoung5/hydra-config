@@ -24,20 +24,18 @@ A symbolic link or symlink is a file that references another. The advantages of 
 
 ```bash
 # You need the dev requirements to build the documentation
-pip install poetry
-poetry install --with dev
+pip install -e .[dev]
 ```
 
 ### Deploy your Changes
 
 [GitHub actions](https://github.com/features/actions) are used to automatically build the site and [GitHub pages](https://pages.github.com/) are used to host the static site. To update deployed content, you have to push to the `main` branch. Once the changes are pushed, the site will rebuild. Please ensure there are no errors in your code/documentation before doing so, as you may get an email from github if something bad happens.
 
-<!-- Further, to update the package available on [PyPI](https://pypi.org/project/ACI/), you must create a [git tag](https://git-scm.com/book/en/v2/Git-Basics-Tagging). When a tag is created and pushed to GitHub, it will start an Action which will automatically push the new release to PyPI. See [Versioning](#versioning) for information on how versioning works with `ACI`. The Github Action only runs when the tag is pushed to main through a merge request. To create a tag, you may do the following: -->
-<!--  -->
-<!-- ```bash -->
-<!-- git tag <tag> # An example tag is v3.0.1 -->
-<!-- git push origin main --tags -->
-<!-- ``` -->
+Further, to update the package available on [PyPI](https://pypi.org/project/hydra-config/), you must create a [git tag](https://git-scm.com/book/en/v2/Git-Basics-Tagging). When a tag is created and pushed to GitHub, it will start an Action which will automatically push the new release to PyPI. See [Versioning](#versioning) for information on how versioning works with `hydra-config`. The Github Action only runs when the tag is pushed to main through a merge request. To create a tag, you may do the following:
+```bash
+git tag <tag> # An example tag is '3.0.1'
+git push origin main --tags
+```
 
 #### Versioning
 
@@ -58,7 +56,7 @@ hydra-config/
 ├── examples/       # Example code for the package
 ├── tests/          # Tests for the package
 ├── LICENSE         # License file
-└── pyproject.toml  # Poetry configuration file
+└── pyproject.toml  # Package configuration file
 ```
 
 ### Editing the Source Code
@@ -108,7 +106,7 @@ There are multiple ways to build sphinx documentation. The easiest is using the 
 
 ```bash
 cd ACI
-poetry install --with docs # Install the necessary dependencies
+pip install -e .[docs] # Install the package with the necessary dependencies
 
 cd docs
 make clean html
