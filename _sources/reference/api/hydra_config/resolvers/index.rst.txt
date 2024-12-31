@@ -121,7 +121,7 @@ Module Contents
    to ``'n0p5'``.
 
 
-.. py:function:: locate_resolver(fn)
+.. py:function:: locate_resolver(fn, /, cast_to = None)
 
    This resolver will locate an object using the :meth:`hydra.utils.get_object`
    method.

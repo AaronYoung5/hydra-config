@@ -323,7 +323,7 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#hydra_config.resolvers.float_to_str_resolver" title="hydra_config.resolvers.float_to_str_resolver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float_to_str_resolver</span></code></a>(value)</p></td>
 <td><p>This resolver will convert a float to a string. This is useful for saving</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#hydra_config.resolvers.locate_resolver" title="hydra_config.resolvers.locate_resolver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">locate_resolver</span></code></a>(fn)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#hydra_config.resolvers.locate_resolver" title="hydra_config.resolvers.locate_resolver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">locate_resolver</span></code></a>(fn, /[, cast_to])</p></td>
 <td><p>This resolver will locate an object using the <code class="xref py py-meth docutils literal notranslate"><span class="pre">hydra.utils.get_object()</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#hydra_config.resolvers.getitem_resolver" title="hydra_config.resolvers.getitem_resolver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getitem_resolver</span></code></a>(obj, key)</p></td>
@@ -452,7 +452,7 @@ to <code class="docutils literal notranslate"><span class="pre">'n0p5'</span></c
 
 <dl class="py function">
 <dt class="sig sig-object py" id="hydra_config.resolvers.locate_resolver">
-<span class="sig-name descname"><span class="pre">locate_resolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/hydra_config/resolvers.html#locate_resolver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydra_config.resolvers.locate_resolver" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">locate_resolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cast_to</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/hydra_config/resolvers.html#locate_resolver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydra_config.resolvers.locate_resolver" title="Link to this definition">¶</a></dt>
 <dd><p>This resolver will locate an object using the <code class="xref py py-meth docutils literal notranslate"><span class="pre">hydra.utils.get_object()</span></code>
 method.</p>
 </dd></dl>
