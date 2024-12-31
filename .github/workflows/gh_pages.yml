@@ -18,27 +18,26 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Step 2: Set up Python environment
+      # Step 2: Fetch all history for all tags and branches
+      - name: Fetch all history for all tags and branches
+        run: git fetch --prune
+
+      # Step 3: Set up Python environment
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.12'
+          python-version: 3.11
 
-      # Step 3: Install Poetry
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          version: latest
-
-      # Step 4: Install dependencies with Poetry, including the docs group
+      # Step 4: Install dependencies with docs optionals
       - name: Install dependencies
         run: |
-          poetry install --with docs --no-interaction --no-ansi
+          python -m pip install --upgrade pip
+          pip install .[docs]
 
       # Step 5: Build Sphinx documentation
       - name: Build Sphinx documentation
         run: |
-          poetry run sphinx-build -b html docs docs/_build/html
+          sphinx-build -b html docs docs/_build/html
 
       # Step 6: Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
