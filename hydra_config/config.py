@@ -1,6 +1,7 @@
 """This module provides a base class for working with Hydra configs."""
 
 import enum
+import types
 from copy import deepcopy
 from dataclasses import dataclass, field, fields, make_dataclass
 from pathlib import Path
@@ -62,7 +63,16 @@ def config_wrapper(cls=None, /, **kwargs):
                 attr = getattr(cls, attr_name)
                 if callable(attr):  # Ensure it's a method
                     try:
-                        setattr(hydrated_cls, attr_name, attr)
+                        if hasattr(attr, "__func__"):
+                            # If it's a bound method, we need to rebind it to the new
+                            # class
+                            setattr(
+                                hydrated_cls,
+                                attr_name,
+                                types.MethodType(attr.__func__, hydrated_cls),
+                            )
+                        else:
+                            setattr(hydrated_cls, attr_name, attr)
                     except TypeError:
                         pass
 
