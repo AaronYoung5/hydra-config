@@ -112,7 +112,7 @@ Package Contents
 
 
 
-   .. py:method:: create(*args, instantiate = True, **instantiate_kwargs)
+   .. py:method:: create(*args, instantiate = True, instantiate_kwargs = {}, **kwargs)
       :classmethod:
 
 
