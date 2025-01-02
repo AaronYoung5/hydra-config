@@ -113,9 +113,9 @@ def run_hydra(
 
         return partial(fn, **vars(parsed_args))
 
-    @hydra.main(
-        config_path=str(config_path), config_name=config_name, version_base=None
-    )
+    config_path = str(config_path) if isinstance(config_path, Path) else config_path
+
+    @hydra.main(config_path=config_path, config_name=config_name, version_base=None)
     @hydra_argparse_override
     def main(config: DictConfig, instantiate: bool = instantiate, **fn_kwargs):
         if instantiate:
