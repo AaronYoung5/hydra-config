@@ -1,6 +1,7 @@
 """This module provides a base class for working with Hydra configs."""
 
 import enum
+import types
 from copy import deepcopy
 from dataclasses import dataclass, field, fields, make_dataclass
 from pathlib import Path
@@ -53,8 +54,27 @@ def config_wrapper(cls=None, /, **kwargs):
             new_fields.append((f.name, zen.DefaultBuilds._sanitized_type(f.type), f))
 
         # Create the new dataclass with the sanitized types
-        kwargs["bases"] = (cls,)
+        kwargs["bases"] = cls.__bases__
         hydrated_cls = make_dataclass(cls.__name__, new_fields, **kwargs)
+
+        # Copy over custom methods from the original class
+        for attr_name in dir(cls):
+            if attr_name not in hydrated_cls.__dict__:
+                attr = getattr(cls, attr_name)
+                if callable(attr):  # Ensure it's a method
+                    try:
+                        if hasattr(attr, "__func__"):
+                            # If it's a bound method, we need to rebind it to the new
+                            # class
+                            setattr(
+                                hydrated_cls,
+                                attr_name,
+                                types.MethodType(attr.__func__, hydrated_cls),
+                            )
+                        else:
+                            setattr(hydrated_cls, attr_name, attr)
+                    except TypeError:
+                        pass
 
         # This is a fix for a bug in the underlying cloudpickle library which is used
         # by hydra/submitit (a hydra plugin) to pickle the configs. Since we're using
