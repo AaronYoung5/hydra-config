@@ -10,6 +10,7 @@ from typing import Any, Callable, Concatenate, Dict, List, Optional
 import hydra
 import RestrictedPython
 import RestrictedPython.Eval
+from hydra.core import global_hydra
 from hydra.utils import get_object
 from omegaconf import DictConfig, OmegaConf
 
@@ -82,6 +83,15 @@ def run_hydra(
     parser.add_argument(
         "--hydra-help", action="store_true", help="Print the hydra help message."
     )
+
+    original_print_help = parser.print_help
+
+    def hydra_custom_help(file=None):
+        original_print_help(file)
+        if global_hydra.GlobalHydra.is_initialized():
+            global_hydra.GlobalHydra.instance().hydra.app_help()
+
+    parser.print_help = hydra_custom_help
 
     def hydra_argparse_override(fn: Callable, /):
         """This function allows us to add custom argparse parameters prior to hydra
@@ -432,3 +442,15 @@ class HydraFlagWrapperMeta(enum.EnumMeta):
             items = [cls.__getitem__(i.strip()) for i in item.split("|")]
             return reduce(lambda x, y: x | y, items)
         return super().__getitem__(item)
+
+
+# =============================================================================
+# Misc
+
+
+class classproperty:
+    def __init__(self, func):
+        self.fget = func
+
+    def __get__(self, instance, owner):
+        return self.fget(owner)

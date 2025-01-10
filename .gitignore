@@ -1,5 +1,6 @@
 # Misc
 .ruff_cache
+outputs/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

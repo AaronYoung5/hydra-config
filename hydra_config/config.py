@@ -9,7 +9,6 @@ from typing import Any, Dict, List, Optional, Self, Tuple
 
 import hydra_zen as zen
 import yaml
-from hydra.core.config_store import ConfigStore
 from omegaconf import MISSING, DictConfig, ListConfig, OmegaConf
 
 # =============================================================================
@@ -61,20 +60,22 @@ def config_wrapper(cls=None, /, **kwargs):
         for attr_name in dir(cls):
             if attr_name not in hydrated_cls.__dict__:
                 attr = getattr(cls, attr_name)
-                if callable(attr):  # Ensure it's a method
-                    try:
-                        if hasattr(attr, "__func__"):
-                            # If it's a bound method, we need to rebind it to the new
-                            # class
-                            setattr(
-                                hydrated_cls,
-                                attr_name,
-                                types.MethodType(attr.__func__, hydrated_cls),
-                            )
-                        else:
-                            setattr(hydrated_cls, attr_name, attr)
-                    except TypeError:
-                        pass
+                if not callable(attr) and not isinstance(attr, property):
+                    continue
+
+                try:
+                    if hasattr(attr, "__func__"):
+                        # If it's a bound method, we need to rebind it to the new
+                        # class
+                        setattr(
+                            hydrated_cls,
+                            attr_name,
+                            types.MethodType(attr.__func__, hydrated_cls),
+                        )
+                    else:
+                        setattr(hydrated_cls, attr_name, attr)
+                except TypeError:
+                    pass
 
         # This is a fix for a bug in the underlying cloudpickle library which is used
         # by hydra/submitit (a hydra plugin) to pickle the configs. Since we're using
@@ -88,7 +89,7 @@ def config_wrapper(cls=None, /, **kwargs):
         hydrated_cls.__module__ = cls.__module__
 
         # Add to the hydra store
-        ConfigStore.instance().store(cls.__name__, hydrated_cls)
+        zen.store(hydrated_cls, name=original_cls.__name__)
 
         return hydrated_cls
 
@@ -347,5 +348,5 @@ class HydraContainerConfig:
     def __str__(self) -> str:
         """Convert the config to a yaml string."""
         if self.config is None:
-            return self.__repr__()
+            return zen.to_yaml(self)
         return self.to_yaml()
