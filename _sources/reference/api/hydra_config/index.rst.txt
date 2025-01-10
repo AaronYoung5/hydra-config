@@ -16,6 +16,7 @@ Submodules
 .. toctree::
    :maxdepth: 1
 
+   /reference/api/hydra_config/cli/index
    /reference/api/hydra_config/config/index
    /reference/api/hydra_config/resolvers/index
    /reference/api/hydra_config/utils/index

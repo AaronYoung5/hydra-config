@@ -14,8 +14,8 @@
     <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <link rel="shortcut icon" href="../../_static/doc.png"/><!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
-        <title>hydra_config.resolvers - hydra-config 0.0.4 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=649a27d8" />
+        <title>hydra_config.resolvers - hydra-config 0.0.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d75fae25" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -186,7 +186,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">hydra-config 0.0.4 documentation</div></a>
+      <a href="../../index.html"><div class="brand">hydra-config 0.0.5 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -231,6 +231,7 @@
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../reference/index.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of API Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../reference/api/hydra_config/index.html">hydra_config</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of hydra_config</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/api/hydra_config/cli/index.html">hydra_config.cli</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../reference/api/hydra_config/config/index.html">hydra_config.config</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../reference/api/hydra_config/resolvers/index.html">hydra_config.resolvers</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../reference/api/hydra_config/utils/index.html">hydra_config.utils</a></li>
@@ -281,22 +282,22 @@
           <h1>Source code for hydra_config.resolvers</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;This module contains custom resolvers for OmegaConf.&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">from</span> <span class="nn">omegaconf</span> <span class="kn">import</span> <span class="n">DictConfig</span><span class="p">,</span> <span class="n">ListConfig</span><span class="p">,</span> <span class="n">OmegaConf</span>
-<span class="kn">from</span> <span class="nn">omegaconf.errors</span> <span class="kn">import</span> <span class="n">ConfigKeyError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">omegaconf</span><span class="w"> </span><span class="kn">import</span> <span class="n">DictConfig</span><span class="p">,</span> <span class="n">ListConfig</span><span class="p">,</span> <span class="n">OmegaConf</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">omegaconf.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConfigKeyError</span>
 
-<span class="kn">from</span> <span class="nn">hydra_config.config</span> <span class="kn">import</span> <span class="n">HydraContainerConfig</span>
-<span class="kn">from</span> <span class="nn">hydra_config.utils</span> <span class="kn">import</span> <span class="n">safe_eval</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">hydra_config.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">HydraContainerConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">hydra_config.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">safe_eval</span>
 
 <span class="c1"># =============================================================================</span>
 
 
 <div class="viewcode-block" id="register_new_resolver">
 <a class="viewcode-back" href="../../reference/api/hydra_config/resolvers/index.html#hydra_config.register_new_resolver">[docs]</a>
-<span class="k">def</span> <span class="nf">register_new_resolver</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">replace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">register_new_resolver</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">replace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Register a new resolver with OmegaConf.</span>
 
 <span class="sd">    Args:</span>
@@ -306,7 +307,7 @@
 <span class="sd">            ``OmegaConf.register_new_resolver``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">fn</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">fn</span><span class="p">):</span>
         <span class="n">OmegaConf</span><span class="o">.</span><span class="n">register_new_resolver</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="n">replace</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">fn</span>
 
@@ -317,7 +318,7 @@
 <span class="nd">@register_new_resolver</span><span class="p">(</span><span class="s2">&quot;search&quot;</span><span class="p">)</span>
 <div class="viewcode-block" id="search_resolver">
 <a class="viewcode-back" href="../../reference/api/hydra_config/resolvers/index.html#hydra_config.search_resolver">[docs]</a>
-<span class="k">def</span> <span class="nf">search_resolver</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">search_resolver</span><span class="p">(</span>
     <span class="n">key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">/</span><span class="p">,</span>
     <span class="n">mode</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;value&quot;</span><span class="p">,</span>
@@ -395,7 +396,7 @@
 <span class="nd">@register_new_resolver</span><span class="p">(</span><span class="s2">&quot;parent&quot;</span><span class="p">)</span>
 <div class="viewcode-block" id="parent_resolver">
 <a class="viewcode-back" href="../../reference/api/hydra_config/resolvers/index.html#hydra_config.parent_resolver">[docs]</a>
-<span class="k">def</span> <span class="nf">parent_resolver</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parent_resolver</span><span class="p">(</span>
     <span class="n">key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;parent_key&quot;</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">_parent_</span><span class="p">:</span> <span class="n">DictConfig</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;This resolver is a wrapper around the search resolver with a default mode of</span>
@@ -407,7 +408,7 @@
 <span class="nd">@register_new_resolver</span><span class="p">(</span><span class="s2">&quot;eval&quot;</span><span class="p">)</span>
 <div class="viewcode-block" id="eval_resolver">
 <a class="viewcode-back" href="../../reference/api/hydra_config/resolvers/index.html#hydra_config.eval_resolver">[docs]</a>
-<span class="k">def</span> <span class="nf">eval_resolver</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">_root_</span><span class="p">:</span> <span class="n">DictConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">eval_resolver</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">_root_</span><span class="p">:</span> <span class="n">DictConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;This resolver will evaluate the key as a python expression. This is useful for</span>
 <span class="sd">    evaluating `any` expression. The resolver calls</span>
 <span class="sd">    :meth:`~hydra_config.utils.safe_eval`, so only a (safe) subset of python is</span>
@@ -428,7 +429,7 @@
 <span class="nd">@register_new_resolver</span><span class="p">(</span><span class="s2">&quot;glob&quot;</span><span class="p">)</span>
 <div class="viewcode-block" id="glob_resolver">
 <a class="viewcode-back" href="../../reference/api/hydra_config/resolvers/index.html#hydra_config.glob_resolver">[docs]</a>
-<span class="k">def</span> <span class="nf">glob_resolver</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">glob_resolver</span><span class="p">(</span>
     <span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DictConfig</span> <span class="o">|</span> <span class="n">ListConfig</span> <span class="o">|</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">/</span><span class="p">,</span>
@@ -454,14 +455,14 @@
 <span class="nd">@register_new_resolver</span><span class="p">(</span><span class="s2">&quot;hydra_select&quot;</span><span class="p">)</span>
 <div class="viewcode-block" id="hydra_select">
 <a class="viewcode-back" href="../../reference/api/hydra_config/resolvers/index.html#hydra_config.hydra_select">[docs]</a>
-<span class="k">def</span> <span class="nf">hydra_select</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">hydra_select</span><span class="p">(</span>
     <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">_root_</span><span class="p">:</span> <span class="n">DictConfig</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;This is similar to the regular hydra resolver, but this won&#39;t through an error</span>
 <span class="sd">    if the global hydra config is unset. Instead, it will return another interpolation</span>
 <span class="sd">    using dotpath notation directly. As in, ${hydra_select:runtime.choices.test}, if</span>
 <span class="sd">    HydraConfig is unset, will return ${hydra.runtime.choices.test}.&quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">hydra.core.hydra_config</span> <span class="kn">import</span> <span class="n">HydraConfig</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">hydra.core.hydra_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">HydraConfig</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">OmegaConf</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">HydraConfig</span><span class="o">.</span><span class="n">get</span><span class="p">(),</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">)</span>
@@ -475,7 +476,7 @@
 <span class="nd">@register_new_resolver</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">)</span>
 <div class="viewcode-block" id="path_resolver">
 <a class="viewcode-back" href="../../reference/api/hydra_config/resolvers/index.html#hydra_config.path_resolver">[docs]</a>
-<span class="k">def</span> <span class="nf">path_resolver</span><span class="p">(</span><span class="o">*</span><span class="n">parts</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">path_resolver</span><span class="p">(</span><span class="o">*</span><span class="n">parts</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Simple resolver to join paths together.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="o">*</span><span class="n">parts</span><span class="p">)</span></div>
 
@@ -484,7 +485,7 @@
 <span class="nd">@register_new_resolver</span><span class="p">(</span><span class="s2">&quot;read&quot;</span><span class="p">)</span>
 <div class="viewcode-block" id="read_resolver">
 <a class="viewcode-back" href="../../reference/api/hydra_config/resolvers/index.html#hydra_config.read_resolver">[docs]</a>
-<span class="k">def</span> <span class="nf">read_resolver</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_resolver</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Simple resolver to read a file.&quot;&quot;&quot;</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span></div>
@@ -494,7 +495,7 @@
 <span class="nd">@register_new_resolver</span><span class="p">(</span><span class="s2">&quot;custom&quot;</span><span class="p">)</span>
 <div class="viewcode-block" id="custom_resolver">
 <a class="viewcode-back" href="../../reference/api/hydra_config/resolvers/index.html#hydra_config.custom_resolver">[docs]</a>
-<span class="k">def</span> <span class="nf">custom_resolver</span><span class="p">(</span><span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">/</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">custom_resolver</span><span class="p">(</span><span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">/</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;This resolver is a wrapper around the select resolver to grab an entry in a</span>
 <span class="sd">    parent :attr:`~hydra_config.config.HydraContainerConfig.custom` field.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -505,7 +506,7 @@
 <span class="nd">@register_new_resolver</span><span class="p">(</span><span class="s2">&quot;float_to_str&quot;</span><span class="p">)</span>
 <div class="viewcode-block" id="float_to_str_resolver">
 <a class="viewcode-back" href="../../reference/api/hydra_config/resolvers/index.html#hydra_config.float_to_str_resolver">[docs]</a>
-<span class="k">def</span> <span class="nf">float_to_str_resolver</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">float_to_str_resolver</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;This resolver will convert a float to a string. This is useful for saving</span>
 <span class="sd">    floats as strings in a config for a filename. All periods will be replaced with</span>
 <span class="sd">    &#39;p&#39; and all negatives will be replaced with &#39;n&#39;; e.g. ``-0.5`` will be converted</span>
@@ -517,10 +518,10 @@
 <span class="nd">@register_new_resolver</span><span class="p">(</span><span class="s2">&quot;locate&quot;</span><span class="p">)</span>
 <div class="viewcode-block" id="locate_resolver">
 <a class="viewcode-back" href="../../reference/api/hydra_config/resolvers/index.html#hydra_config.locate_resolver">[docs]</a>
-<span class="k">def</span> <span class="nf">locate_resolver</span><span class="p">(</span><span class="n">fn</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="n">cast_to</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">locate_resolver</span><span class="p">(</span><span class="n">fn</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="n">cast_to</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;This resolver will locate an object using the :meth:`hydra.utils.get_object`</span>
 <span class="sd">    method.&quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">hydra.utils</span> <span class="kn">import</span> <span class="n">get_object</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">hydra.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_object</span>
 
     <span class="n">obj</span> <span class="o">=</span> <span class="n">get_object</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">cast_to</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -541,7 +542,7 @@
 <span class="nd">@register_new_resolver</span><span class="p">(</span><span class="s2">&quot;getitem&quot;</span><span class="p">)</span>
 <div class="viewcode-block" id="getitem_resolver">
 <a class="viewcode-back" href="../../reference/api/hydra_config/resolvers/index.html#hydra_config.getitem_resolver">[docs]</a>
-<span class="k">def</span> <span class="nf">getitem_resolver</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">ListConfig</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">getitem_resolver</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">ListConfig</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;This resolver will get an item from a list.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">obj</span><span class="p">[</span><span class="n">key</span><span class="p">]</span></div>
 
@@ -550,7 +551,7 @@
 <span class="nd">@register_new_resolver</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">)</span>
 <div class="viewcode-block" id="target_resolver">
 <a class="viewcode-back" href="../../reference/api/hydra_config/resolvers/index.html#hydra_config.target_resolver">[docs]</a>
-<span class="k">def</span> <span class="nf">target_resolver</span><span class="p">(</span><span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">target_resolver</span><span class="p">(</span><span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;This is a resolver which serves as a proxy for the _target_ attribute used</span>
 <span class="sd">    in hydra. Basically :attr:`target` will be defined as ``_target_`` and the rest of</span>
 <span class="sd">    the attributes will be passed as arguments to the target. You should always</span>
@@ -564,7 +565,7 @@
 <span class="nd">@register_new_resolver</span><span class="p">(</span><span class="s2">&quot;instantiate&quot;</span><span class="p">)</span>
 <div class="viewcode-block" id="instantiate_resolver">
 <a class="viewcode-back" href="../../reference/api/hydra_config/resolvers/index.html#hydra_config.instantiate_resolver">[docs]</a>
-<span class="k">def</span> <span class="nf">instantiate_resolver</span><span class="p">(</span><span class="n">target</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">DictConfig</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">_root_</span><span class="p">:</span> <span class="n">DictConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">instantiate_resolver</span><span class="p">(</span><span class="n">target</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">DictConfig</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">_root_</span><span class="p">:</span> <span class="n">DictConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;This resolver will instantiate a target using the HydraContainerConfig. If the</span>
 <span class="sd">    target is a string, it will be resolved using the target_resolver. If the target is</span>
 <span class="sd">    a DictConfig, it will be passed directly to the HydraContainerConfig.instantiate</span>
@@ -613,7 +614,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=8c5712d9"></script>
+</div><script src="../../_static/documentation_options.js?v=282f96c0"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>

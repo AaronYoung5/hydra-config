@@ -14,8 +14,8 @@
     <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <link rel="shortcut icon" href="../../_static/doc.png"/><!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
-        <title>hydra_config.utils - hydra-config 0.0.4 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=649a27d8" />
+        <title>hydra_config.utils - hydra-config 0.0.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d75fae25" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -186,7 +186,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">hydra-config 0.0.4 documentation</div></a>
+      <a href="../../index.html"><div class="brand">hydra-config 0.0.5 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -231,6 +231,7 @@
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../reference/index.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of API Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../reference/api/hydra_config/index.html">hydra_config</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of hydra_config</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/api/hydra_config/cli/index.html">hydra_config.cli</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../reference/api/hydra_config/config/index.html">hydra_config.config</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../reference/api/hydra_config/resolvers/index.html">hydra_config.resolvers</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../reference/api/hydra_config/utils/index.html">hydra_config.utils</a></li>
@@ -281,27 +282,28 @@
           <h1>Source code for hydra_config.utils</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;This module contains utility functions for use with Hydra.&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">argparse</span>
-<span class="kn">import</span> <span class="nn">enum</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Concatenate</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">enum</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Concatenate</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">import</span> <span class="nn">hydra</span>
-<span class="kn">import</span> <span class="nn">RestrictedPython</span>
-<span class="kn">import</span> <span class="nn">RestrictedPython.Eval</span>
-<span class="kn">from</span> <span class="nn">hydra.utils</span> <span class="kn">import</span> <span class="n">get_object</span>
-<span class="kn">from</span> <span class="nn">omegaconf</span> <span class="kn">import</span> <span class="n">DictConfig</span><span class="p">,</span> <span class="n">OmegaConf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">hydra</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">RestrictedPython</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">RestrictedPython.Eval</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">hydra.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">global_hydra</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">hydra.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_object</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">omegaconf</span><span class="w"> </span><span class="kn">import</span> <span class="n">DictConfig</span><span class="p">,</span> <span class="n">OmegaConf</span>
 
-<span class="kn">from</span> <span class="nn">hydra_config.config</span> <span class="kn">import</span> <span class="n">HydraContainerConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">hydra_config.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">HydraContainerConfig</span>
 
 <span class="c1"># =============================================================================</span>
 
 
 <div class="viewcode-block" id="run_hydra">
 <a class="viewcode-back" href="../../reference/api/hydra_config/utils/index.html#hydra_config.run_hydra">[docs]</a>
-<span class="k">def</span> <span class="nf">run_hydra</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_hydra</span><span class="p">(</span>
     <span class="n">main_fn</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
         <span class="n">Callable</span><span class="p">[[</span><span class="n">Concatenate</span><span class="p">[</span><span class="n">HydraContainerConfig</span><span class="p">,</span> <span class="o">...</span><span class="p">]],</span> <span class="kc">None</span><span class="p">]</span>
     <span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">,</span> <span class="o">**</span><span class="n">__</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
@@ -366,7 +368,16 @@
         <span class="s2">&quot;--hydra-help&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Print the hydra help message.&quot;</span>
     <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">hydra_argparse_override</span><span class="p">(</span><span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">/</span><span class="p">):</span>
+    <span class="n">original_print_help</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">print_help</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">hydra_custom_help</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">original_print_help</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">global_hydra</span><span class="o">.</span><span class="n">GlobalHydra</span><span class="o">.</span><span class="n">is_initialized</span><span class="p">():</span>
+            <span class="n">global_hydra</span><span class="o">.</span><span class="n">GlobalHydra</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">hydra</span><span class="o">.</span><span class="n">app_help</span><span class="p">()</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">print_help</span> <span class="o">=</span> <span class="n">hydra_custom_help</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">hydra_argparse_override</span><span class="p">(</span><span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">/</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;This function allows us to add custom argparse parameters prior to hydra</span>
 <span class="sd">        parsing the config.</span>
 
@@ -376,8 +387,8 @@
 <span class="sd">        Note:</span>
 <span class="sd">            Augmented from hydra discussion #2598.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">import</span> <span class="nn">sys</span>
-        <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
 
         <span class="n">parsed_args</span><span class="p">,</span> <span class="n">unparsed_args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_known_args</span><span class="p">()</span>
 
@@ -400,7 +411,7 @@
 
     <span class="nd">@hydra</span><span class="o">.</span><span class="n">main</span><span class="p">(</span><span class="n">config_path</span><span class="o">=</span><span class="n">config_path</span><span class="p">,</span> <span class="n">config_name</span><span class="o">=</span><span class="n">config_name</span><span class="p">,</span> <span class="n">version_base</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="nd">@hydra_argparse_override</span>
-    <span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="n">DictConfig</span><span class="p">,</span> <span class="n">instantiate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">instantiate</span><span class="p">,</span> <span class="o">**</span><span class="n">fn_kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="n">DictConfig</span><span class="p">,</span> <span class="n">instantiate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">instantiate</span><span class="p">,</span> <span class="o">**</span><span class="n">fn_kwargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">instantiate</span><span class="p">:</span>
             <span class="n">config</span> <span class="o">=</span> <span class="n">HydraContainerConfig</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -415,7 +426,7 @@
 
 <div class="viewcode-block" id="safe_eval">
 <a class="viewcode-back" href="../../reference/api/hydra_config/utils/index.html#hydra_config.safe_eval">[docs]</a>
-<span class="k">def</span> <span class="nf">safe_eval</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">additional_vars</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{})</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">safe_eval</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">additional_vars</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{})</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Evaluate a string containing a Python expression in a safe manner.</span>
 
@@ -465,7 +476,7 @@
 
 <div class="viewcode-block" id="glob">
 <a class="viewcode-back" href="../../reference/api/hydra_config/utils/index.html#hydra_config.glob">[docs]</a>
-<span class="k">def</span> <span class="nf">glob</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">flattened</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">_root_</span><span class="p">:</span> <span class="n">DictConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">glob</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">flattened</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">_root_</span><span class="p">:</span> <span class="n">DictConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;This resolver will glob a key in the config. This is useful for finding all keys</span>
 <span class="sd">    that match a pattern. This is particularly useful for finding all keys that match a</span>
 <span class="sd">    pattern in a nested config. This is effectively select, but allows ``*`` to be used</span>
@@ -493,7 +504,7 @@
 <span class="sd">        _root_ (DictConfig): The root config.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">recursive_glob</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="n">DictConfig</span> <span class="o">|</span> <span class="n">Any</span><span class="p">,</span> <span class="n">keys</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">recursive_glob</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="n">DictConfig</span> <span class="o">|</span> <span class="n">Any</span><span class="p">,</span> <span class="n">keys</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">keys</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">DictConfig</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">config</span>
 
@@ -525,7 +536,7 @@
 
         <span class="k">return</span> <span class="n">result</span>
 
-    <span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">flatten</span><span class="p">(</span>
         <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;This will flatten the nested dict to a flat dict where each key is a leaf</span>
@@ -549,7 +560,7 @@
 
 <div class="viewcode-block" id="merge_with_kwargs">
 <a class="viewcode-back" href="../../reference/api/hydra_config/utils/index.html#hydra_config.merge_with_kwargs">[docs]</a>
-<span class="k">def</span> <span class="nf">merge_with_kwargs</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">merge_with_kwargs</span><span class="p">(</span>
     <span class="n">config</span><span class="p">:</span> <span class="n">DictConfig</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">instantiate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -598,7 +609,7 @@
 
 <div class="viewcode-block" id="instance_wrapper">
 <a class="viewcode-back" href="../../reference/api/hydra_config/utils/index.html#hydra_config.instance_wrapper">[docs]</a>
-<span class="k">def</span> <span class="nf">instance_wrapper</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">instance_wrapper</span><span class="p">(</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">instance</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="n">key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -661,7 +672,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">setattrs</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setattrs</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
@@ -689,7 +700,7 @@
         <span class="n">partial_instance</span> <span class="o">=</span> <span class="n">instance</span>
         <span class="n">config_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
 
-        <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">instance</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">partial_instance</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
 
@@ -706,7 +717,7 @@
 
 <div class="viewcode-block" id="HydraFlagWrapperMeta">
 <a class="viewcode-back" href="../../reference/api/hydra_config/utils/index.html#hydra_config.HydraFlagWrapperMeta">[docs]</a>
-<span class="k">class</span> <span class="nc">HydraFlagWrapperMeta</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">EnumMeta</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">HydraFlagWrapperMeta</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">EnumMeta</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;This is a simple metaclass to allow for the use of the | operator to combine</span>
 <span class="sd">    flags. This means you can simply put ``flag1 | flag2`` in the yaml file and it will</span>
 <span class="sd">    be combined into a single flag.</span>
@@ -720,20 +731,32 @@
 
 <div class="viewcode-block" id="HydraFlagWrapperMeta.__getitem__">
 <a class="viewcode-back" href="../../reference/api/hydra_config/utils/index.html#hydra_config.HydraFlagWrapperMeta.__getitem__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;This method allows for the use of the | operator to combine flags. This</span>
 <span class="sd">        means you can simply put ``flag1 | flag2`` in the yaml file and it will be</span>
 <span class="sd">        combined into a single flag.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;|&quot;</span> <span class="ow">in</span> <span class="n">item</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">reduce</span>
 
             <span class="n">items</span> <span class="o">=</span> <span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">)]</span>
             <span class="k">return</span> <span class="n">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">|</span> <span class="n">y</span><span class="p">,</span> <span class="n">items</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">item</span><span class="p">)</span></div>
 </div>
 
+
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># Misc</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">classproperty</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fget</span> <span class="o">=</span> <span class="n">func</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">owner</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fget</span><span class="p">(</span><span class="n">owner</span><span class="p">)</span>
 </pre></div>
         </article>
       </div>
@@ -766,7 +789,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=8c5712d9"></script>
+</div><script src="../../_static/documentation_options.js?v=282f96c0"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>

@@ -1,0 +1,74 @@
+hydra_config.cli
+================
+
+.. py:module:: hydra_config.cli
+
+.. autoapi-nested-parse::
+
+   Hydra Config CLI utilities.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   hydra_config.cli.store
+   hydra_config.cli.builds
+   hydra_config.cli.register_cli
+   hydra_config.cli.run_cli
+
+
+Module Contents
+---------------
+
+.. py:function:: store(func_or_cls, /, *, name = '', group = '', build = True, **kwargs)
+
+   Store a function or class in Hydra Zen's store with a specific group and name.
+
+   :Parameters: * **func_or_cls** (*Callable[..., Any] | Type[Any]*) -- The function or class to store.
+                * **name** (*str*) -- The name under which to store the function or class. Defaults to
+                  an empty string.
+                * **group** (*str*) -- The group name to associate with the store entry. Defaults to an
+                  empty string.
+                * **\*\*kwargs** (*Any*) -- Additional arguments passed to `zen.store`.
+
+   :returns: *Any | None* -- The stored entry, or `None` if the entry already exists.
+
+
+.. py:function:: builds(func_or_cls, /, *, auto_detect = True, group = '', populate_full_signature = True, **kwargs)
+
+   Build a Hydra Zen configuration for a given function or class.
+
+   :Parameters: * **func_or_cls** (*Callable[..., Any] | Type[Any]*) -- The function or class to build a
+                  configuration for.
+                * **auto_detect** (*bool*) -- Automatically detect and store parameter types. Defaults to
+                  True.
+                * **group** (*str*) -- The group name for the configuration. Defaults to an empty string.
+                * **populate_full_signature** (*bool*) -- Whether to populate the full signature in the
+                  configuration. Defaults to True.
+                * **\*\*kwargs** (*Any*) -- Additional arguments passed to `zen.builds`.
+
+   :returns: *Any* -- A dataclass representing the Hydra Zen configuration.
+
+
+.. py:function:: register_cli(func = None, /, **kwargs)
+
+   Register a CLI command.
+
+   The default name of the CLI command is the function's name.
+
+   :Parameters: **func** (*Callable | None*) -- The CLI function to register. If None, returns a
+                decorator.
+
+   :returns: *Callable* -- The registered CLI function or a decorator if `func` is None.
+
+
+.. py:function:: run_cli(func, /, **kwargs)
+
+   Run a CLI command.
+
+   :Parameters: **func** (*Callable*) -- The CLI command to run.
+
+
