@@ -88,7 +88,7 @@ def run_hydra(
 
     def hydra_custom_help(file=None):
         original_print_help(file)
-        if global_hydra.GlobalHydra.is_initialized():
+        if global_hydra.GlobalHydra.instance().is_initialized():
             global_hydra.GlobalHydra.instance().hydra.app_help()
 
     parser.print_help = hydra_custom_help
