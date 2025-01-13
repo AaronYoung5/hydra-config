@@ -25,8 +25,18 @@ class System:
 
 
 @register_cli
-def dataclass_cli(system: System, x: int, flag: bool = False):
-    print(system.config)
+def dataclass_cli(
+    system: System,
+    x: int,
+    flag: bool = False,
+):
+    print(
+        "System Config Param:",
+        system.config.param_any,
+        type(system.config.param_any),
+    )
+    print("X:", x, type(x))
+    print("Flag:", flag, type(flag))
 
 
 if __name__ == "__main__":

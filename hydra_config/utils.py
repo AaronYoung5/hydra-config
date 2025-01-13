@@ -4,15 +4,18 @@ import argparse
 import enum
 import re
 from functools import partial
+from inspect import signature
 from pathlib import Path
-from typing import Any, Callable, Concatenate, Dict, List, Optional
+from typing import Any, Callable, Concatenate, Dict, List, Optional, Type
 
 import hydra
+import hydra_zen as zen
 import RestrictedPython
 import RestrictedPython.Eval
 from hydra.core import global_hydra
 from hydra.utils import get_object
 from omegaconf import DictConfig, OmegaConf
+from omegaconf._utils import is_primitive_type_annotation
 
 from hydra_config.config import HydraContainerConfig
 
@@ -134,6 +137,97 @@ def run_hydra(
         return main_fn(config, **fn_kwargs)
 
     main()
+
+
+# =============================================================================
+
+
+def store(
+    func_or_cls: Callable[..., Any] | Type[Any],
+    /,
+    *,
+    name: str = "",
+    group: str = "",
+    build: bool = True,
+    **kwargs: Any,
+) -> Any:
+    """Store a function or class in Hydra Zen's store with a specific group and name.
+
+    Args:
+        func_or_cls (Callable[..., Any] | Type[Any]): The function or class to store.
+        name (str): The name under which to store the function or class. Defaults to
+            an empty string.
+        group (str): The group name to associate with the store entry. Defaults to an
+            empty string.
+        **kwargs (Any): Additional arguments passed to `zen.store`.
+
+    Returns:
+        Any | None: The stored entry, or `None` if the entry already exists.
+    """
+    if not build:
+        return zen.store(func_or_cls, group=group, name=func_or_cls.__name__, **kwargs)
+
+    if ((group + name, func_or_cls.__name__)) in zen.store:
+        return zen.store.get_entry(group + name, func_or_cls.__name__)["node"]
+
+    if (None, func_or_cls.__name__) in zen.store:
+        build = zen.store.get_entry(None, func_or_cls.__name__)["node"]
+    else:
+        build = builds(func_or_cls, group=name + "/", **kwargs)
+    out = zen.store(build, group=group + name, name=func_or_cls.__name__)
+
+    if isinstance(func_or_cls, type):
+        if func_or_cls not in (str, int, float, bool):
+            for sub_cls in func_or_cls.__subclasses__():
+                store(sub_cls, name=name, group=group)
+
+    return out
+
+
+def builds(
+    func_or_cls: Callable[..., Any] | Type[Any],
+    /,
+    *,
+    auto_detect: bool = True,
+    group: str = "",
+    **kwargs: Any,
+) -> Any:
+    """Build a Hydra Zen configuration for a given function or class.
+
+    Args:
+        func_or_cls (Callable[..., Any] | Type[Any]): The function or class to build a
+            configuration for.
+        auto_detect (bool): Automatically detect and store parameter types. Defaults to
+            True.
+        group (str): The group name for the configuration. Defaults to an empty string.
+        **kwargs (Any): Additional arguments passed to `zen.builds`.
+
+    Returns:
+        Any: A dataclass representing the Hydra Zen configuration.
+    """
+    defaults: dict[str, str] = {}
+    if auto_detect:
+        sig = signature(func_or_cls)
+
+        for param in sig.parameters.values():
+            # Check if the parameter has a type hint
+            if param.annotation is not param.empty:
+                type_hint = param.annotation
+                if is_primitive_type_annotation(type_hint) or type_hint is Any:
+                    continue
+
+                # Only store the type hint if it is a non-primitive
+                store(type_hint, name=param.name, group=group)
+
+                defaults[param.name] = "???"
+
+    hydra_defaults = ["_self_"] + [
+        {name: default} for name, default in defaults.items()
+    ]
+
+    kwargs.setdefault("populate_full_signature", True)
+    kwargs.setdefault("zen_dataclass", {}).setdefault("cls_name", func_or_cls.__name__)
+    return zen.builds(func_or_cls, hydra_defaults=hydra_defaults, **kwargs)
 
 
 # =============================================================================

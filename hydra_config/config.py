@@ -89,7 +89,11 @@ def config_wrapper(cls=None, /, **kwargs):
         hydrated_cls.__module__ = cls.__module__
 
         # Add to the hydra store
-        zen.store(hydrated_cls, name=original_cls.__name__)
+        zen.store(
+            hydrated_cls,
+            name=original_cls.__name__,
+            zen_dataclass=dict(cls_name=original_cls.__name__),
+        )
 
         return hydrated_cls
 
