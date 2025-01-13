@@ -14,7 +14,7 @@
     <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <link rel="shortcut icon" href="../../_static/doc.png"/><!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
-        <title>hydra_config.cli - hydra-config 0.0.6 documentation</title>
+        <title>hydra_config.cli - hydra-config 0.0.7 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d75fae25" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
@@ -186,7 +186,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">hydra-config 0.0.6 documentation</div></a>
+      <a href="../../index.html"><div class="brand">hydra-config 0.0.7 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -226,7 +226,9 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../usage/index.html">Usage</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Usage</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../examples/index.html">Examples</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Examples</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../examples/index.html">Examples</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Examples</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/standalone_cli.html">Standalone CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/dataclass_cli.html">Dataclass-based CLI</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../reference/index.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of API Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -282,120 +284,37 @@
           <h1>Source code for hydra_config.cli</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Hydra Config CLI utilities.&quot;&quot;&quot;</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">inspect</span><span class="w"> </span><span class="kn">import</span> <span class="n">signature</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Type</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">FunctionType</span><span class="p">,</span> <span class="n">UnionType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">get_type_hints</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">hydra_zen</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">zen</span>
 
-
-<div class="viewcode-block" id="store">
-<a class="viewcode-back" href="../../reference/api/hydra_config/cli/index.html#hydra_config.cli.store">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">store</span><span class="p">(</span>
-    <span class="n">func_or_cls</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="n">Type</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
-    <span class="o">/</span><span class="p">,</span>
-    <span class="o">*</span><span class="p">,</span>
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-    <span class="n">group</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-    <span class="n">build</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Store a function or class in Hydra Zen&#39;s store with a specific group and name.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        func_or_cls (Callable[..., Any] | Type[Any]): The function or class to store.</span>
-<span class="sd">        name (str): The name under which to store the function or class. Defaults to</span>
-<span class="sd">            an empty string.</span>
-<span class="sd">        group (str): The group name to associate with the store entry. Defaults to an</span>
-<span class="sd">            empty string.</span>
-<span class="sd">        **kwargs (Any): Additional arguments passed to `zen.store`.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        Any | None: The stored entry, or `None` if the entry already exists.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">build</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">zen</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="n">func_or_cls</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">func_or_cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="p">((</span><span class="n">group</span> <span class="o">+</span> <span class="n">name</span><span class="p">,</span> <span class="n">func_or_cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span> <span class="ow">in</span> <span class="n">zen</span><span class="o">.</span><span class="n">store</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">zen</span><span class="o">.</span><span class="n">store</span><span class="o">.</span><span class="n">get_entry</span><span class="p">(</span><span class="n">group</span> <span class="o">+</span> <span class="n">name</span><span class="p">,</span> <span class="n">func_or_cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)[</span><span class="s2">&quot;node&quot;</span><span class="p">]</span>
-
-    <span class="k">if</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">func_or_cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span> <span class="ow">in</span> <span class="n">zen</span><span class="o">.</span><span class="n">store</span><span class="p">:</span>
-        <span class="n">build</span> <span class="o">=</span> <span class="n">zen</span><span class="o">.</span><span class="n">store</span><span class="o">.</span><span class="n">get_entry</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">func_or_cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)[</span><span class="s2">&quot;node&quot;</span><span class="p">]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">build</span> <span class="o">=</span> <span class="n">builds</span><span class="p">(</span><span class="n">func_or_cls</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="n">out</span> <span class="o">=</span> <span class="n">zen</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="n">build</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">group</span> <span class="o">+</span> <span class="n">name</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">func_or_cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func_or_cls</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">func_or_cls</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">sub_cls</span> <span class="ow">in</span> <span class="n">func_or_cls</span><span class="o">.</span><span class="n">__subclasses__</span><span class="p">():</span>
-                <span class="n">store</span><span class="p">(</span><span class="n">sub_cls</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">out</span></div>
+<span class="kn">from</span><span class="w"> </span><span class="nn">hydra_config.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">builds</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_sanitize_type_hints</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">FunctionType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FunctionType</span><span class="p">:</span>
+    <span class="n">original_hints</span> <span class="o">=</span> <span class="n">get_type_hints</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="n">sanitized_hints</span> <span class="o">=</span> <span class="p">{}</span>
 
-<div class="viewcode-block" id="builds">
-<a class="viewcode-back" href="../../reference/api/hydra_config/cli/index.html#hydra_config.cli.builds">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">builds</span><span class="p">(</span>
-    <span class="n">func_or_cls</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="n">Type</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
-    <span class="o">/</span><span class="p">,</span>
-    <span class="o">*</span><span class="p">,</span>
-    <span class="n">auto_detect</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="n">group</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-    <span class="n">populate_full_signature</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a Hydra Zen configuration for a given function or class.</span>
+    <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">hint</span> <span class="ow">in</span> <span class="n">original_hints</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">hint</span><span class="p">)</span> <span class="ow">is</span> <span class="n">UnionType</span><span class="p">:</span>
+            <span class="n">sanitized_hints</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="n">hint</span><span class="o">.</span><span class="n">__args__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sanitized_hints</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="n">hint</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        func_or_cls (Callable[..., Any] | Type[Any]): The function or class to build a</span>
-<span class="sd">            configuration for.</span>
-<span class="sd">        auto_detect (bool): Automatically detect and store parameter types. Defaults to</span>
-<span class="sd">            True.</span>
-<span class="sd">        group (str): The group name for the configuration. Defaults to an empty string.</span>
-<span class="sd">        populate_full_signature (bool): Whether to populate the full signature in the</span>
-<span class="sd">            configuration. Defaults to True.</span>
-<span class="sd">        **kwargs (Any): Additional arguments passed to `zen.builds`.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        Any: A dataclass representing the Hydra Zen configuration.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">defaults</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">if</span> <span class="n">auto_detect</span><span class="p">:</span>
-        <span class="n">sig</span> <span class="o">=</span> <span class="n">signature</span><span class="p">(</span><span class="n">func_or_cls</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">sig</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="c1"># Check if the parameter has a type hint</span>
-            <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">annotation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">param</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
-                <span class="n">type_hint</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">annotation</span>
-                <span class="k">if</span> <span class="n">type_hint</span> <span class="ow">is</span> <span class="n">Any</span><span class="p">:</span>
-                    <span class="k">continue</span>
-
-                <span class="k">if</span> <span class="n">type_hint</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-                    <span class="c1"># Only store the type hint if it is a non-primitive</span>
-                    <span class="n">store</span><span class="p">(</span><span class="n">type_hint</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">)</span>
-
-                    <span class="n">defaults</span><span class="p">[</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;???&quot;</span>
-
-    <span class="n">hydra_defaults</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;_self_&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span>
-        <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">default</span><span class="p">}</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">default</span> <span class="ow">in</span> <span class="n">defaults</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-    <span class="p">]</span>
-
-    <span class="k">return</span> <span class="n">zen</span><span class="o">.</span><span class="n">builds</span><span class="p">(</span>
-        <span class="n">func_or_cls</span><span class="p">,</span>
-        <span class="n">populate_full_signature</span><span class="o">=</span><span class="n">populate_full_signature</span><span class="p">,</span>
-        <span class="n">hydra_defaults</span><span class="o">=</span><span class="n">hydra_defaults</span><span class="p">,</span>
-        <span class="n">zen_dataclass</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">cls_name</span><span class="o">=</span><span class="n">func_or_cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">),</span>
-        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-    <span class="p">)</span></div>
-
+    <span class="n">func</span><span class="o">.</span><span class="vm">__annotations__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">sanitized_hints</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">func</span>
 
 
 <div class="viewcode-block" id="register_cli">
-<a class="viewcode-back" href="../../reference/api/hydra_config/cli/index.html#hydra_config.cli.register_cli">[docs]</a>
+<a class="viewcode-back" href="../../reference/api/hydra_config/index.html#hydra_config.cli.register_cli">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">register_cli</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Register a CLI command.</span>
 
-<span class="sd">    The default name of the CLI command is the function&#39;s name.</span>
+<span class="sd">    Example:</span>
+
+<span class="sd">        .. literalinclude:: /../examples/standalone_cli.py</span>
+
 
 <span class="sd">    Args:</span>
 <span class="sd">        func (Callable | None): The CLI function to register. If None, returns a</span>
@@ -407,7 +326,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
         <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
-        <span class="n">zen</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="n">builds</span><span class="p">(</span><span class="n">func</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">zen</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="n">builds</span><span class="p">(</span><span class="n">_sanitize_type_hints</span><span class="p">(</span><span class="n">func</span><span class="p">)),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">func</span>
 
@@ -418,7 +337,7 @@
 
 
 <div class="viewcode-block" id="run_cli">
-<a class="viewcode-back" href="../../reference/api/hydra_config/cli/index.html#hydra_config.cli.run_cli">[docs]</a>
+<a class="viewcode-back" href="../../reference/api/hydra_config/index.html#hydra_config.cli.run_cli">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">run_cli</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Run a CLI command.</span>
 
@@ -464,7 +383,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=1fd71caa"></script>
+</div><script src="../../_static/documentation_options.js?v=bbaf98b3"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>
