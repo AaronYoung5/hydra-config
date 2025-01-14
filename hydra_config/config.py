@@ -3,7 +3,7 @@
 import enum
 import types
 from copy import deepcopy
-from dataclasses import MISSING, dataclass, field, fields, is_dataclass, make_dataclass
+from dataclasses import dataclass, field, fields, make_dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Self, Tuple
 
@@ -49,15 +49,8 @@ def config_wrapper(cls=None, /, **kwargs):
         # class.
         cls = dataclass(original_cls, **kwargs)
 
-        defaults: dict[str, str | dict[str, list[str] | str]] = {}
         new_fields = []
         for f in fields(cls):
-            if (
-                is_dataclass(f.type)
-                and f.default is MISSING
-                and f.default_factory is MISSING
-            ):
-                defaults[f.name] = "???"
             new_fields.append((f.name, zen.DefaultBuilds._sanitized_type(f.type), f))
 
         # Create the new dataclass with the sanitized types
@@ -97,15 +90,7 @@ def config_wrapper(cls=None, /, **kwargs):
         hydrated_cls.__module__ = cls.__module__
 
         # Add to the hydra store
-        hydra_defaults = ["_self_"] + [
-            {name: default} for name, default in defaults.items()
-        ]
-        hydra_store(
-            hydrated_cls,
-            name=original_cls.__name__,
-            zen_dataclass=dict(cls_name=original_cls.__name__),
-            hydra_defaults=hydra_defaults,
-        )
+        hydra_store(hydrated_cls, name=original_cls.__name__, to_config=lambda x: x)
 
         return hydrated_cls
 

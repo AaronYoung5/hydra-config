@@ -3,7 +3,7 @@
 import argparse
 import enum
 import re
-from dataclasses import fields, is_dataclass
+from dataclasses import MISSING, fields, is_dataclass
 from functools import partial
 from inspect import signature
 from pathlib import Path
@@ -200,7 +200,36 @@ def store(
 
     if (build := _get_entry(name=func_or_cls.__name__)) is None:
         build = builds(func_or_cls, group=name + "/", **kwargs)
-    hydra_store(build, group=group + name, name=func_or_cls.__name__)
+
+    defaults: dict[str, str | list[str] | None] = {}
+    if is_dataclass(func_or_cls):
+        for field in fields(func_or_cls):
+            if (
+                is_dataclass(field.type)
+                and field.default_factory in (MISSING, None)
+                and field.default in (MISSING, None)
+            ):
+                defaults[field.name] = "???"
+
+    # print(defaults)
+    if defaults:
+        hydra_defaults = ["_self_"] + [
+            {name: default} for name, default in defaults.items()
+        ]
+        hydra_store(
+            build,
+            group=group + name,
+            name=func_or_cls.__name__,
+            hydra_defaults=hydra_defaults,
+            zen_dataclass=dict(cls_name=func_or_cls.__name__),
+        )
+    else:
+        hydra_store(
+            build,
+            group=group + name,
+            name=func_or_cls.__name__,
+            to_config=lambda x: x,
+        )
 
     # Recursively store all subclasses so that they will be listed as options
     for sub_cls in func_or_cls.__subclasses__():
@@ -254,13 +283,14 @@ def builds(
                 continue
 
             # Only store the type hint if it is a non-primitive
+            print(param.name, type_hint)
             store(type_hint, name=param.name, group=group)
 
-            assert param.default is param.empty, (
-                f"Parameter '{param.name}' in '{func_or_cls.__name__}' has a default "
-                "value. Default values are not supported for parameters with type "
-                "hints."
-            )
+            # assert param.default is param.empty, (
+            #     f"Parameter '{param.name}' in '{func_or_cls.__name__}' has a default "
+            #     "value. Default values are not supported for parameters with type "
+            #     "hints."
+            # )
             defaults[param.name] = "???"
 
     hydra_defaults = ["_self_"] + [
@@ -442,6 +472,8 @@ def merge_with_kwargs(
     config = OmegaConf.unsafe_merge(config, kwargs)
 
     if instantiate:
+        from hydra_config.config import HydraContainerConfig
+
         return HydraContainerConfig.instantiate(config)
     return config
 

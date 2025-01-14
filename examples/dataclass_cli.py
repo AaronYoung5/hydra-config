@@ -19,6 +19,11 @@ class ConfigFloat(Config):
     param_float: float
 
 
+@config_wrapper
+class ConfigNested(Config):
+    param_nested: Config
+
+
 class System:
     def __init__(self, config: Config):
         self.config = config
