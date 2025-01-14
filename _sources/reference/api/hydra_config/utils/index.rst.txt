@@ -80,7 +80,7 @@ Module Contents
    :keyword kwargs: Additional keyword arguments to pass to the instantiate function.
 
 
-.. py:function:: store(func_or_cls, /, *, name = '', group = '', _recurse = True, **kwargs)
+.. py:function:: store(func_or_cls, /, *, name = '', group = '', _max_recursion = 10, **kwargs)
 
    Store a function or class in Hydra Zen's store with a specific group and name.
 
