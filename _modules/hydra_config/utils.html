@@ -14,7 +14,7 @@
     <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <link rel="shortcut icon" href="../../_static/doc.png"/><!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
-        <title>hydra_config.utils - hydra-config 0.0.9 documentation</title>
+        <title>hydra_config.utils - hydra-config 0.0.10 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d75fae25" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
@@ -186,7 +186,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">hydra-config 0.0.9 documentation</div></a>
+      <a href="../../index.html"><div class="brand">hydra-config 0.0.10 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -287,7 +287,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">enum</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">fields</span><span class="p">,</span> <span class="n">is_dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">MISSING</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">is_dataclass</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">inspect</span><span class="w"> </span><span class="kn">import</span> <span class="n">signature</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
@@ -489,7 +489,36 @@
 
     <span class="k">if</span> <span class="p">(</span><span class="n">build</span> <span class="o">:=</span> <span class="n">_get_entry</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">func_or_cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">build</span> <span class="o">=</span> <span class="n">builds</span><span class="p">(</span><span class="n">func_or_cls</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="n">hydra_store</span><span class="p">(</span><span class="n">build</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">group</span> <span class="o">+</span> <span class="n">name</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">func_or_cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+
+    <span class="n">defaults</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">is_dataclass</span><span class="p">(</span><span class="n">func_or_cls</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">(</span><span class="n">func_or_cls</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">is_dataclass</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="n">field</span><span class="o">.</span><span class="n">default_factory</span> <span class="ow">in</span> <span class="p">(</span><span class="n">MISSING</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="n">field</span><span class="o">.</span><span class="n">default</span> <span class="ow">in</span> <span class="p">(</span><span class="n">MISSING</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="p">):</span>
+                <span class="n">defaults</span><span class="p">[</span><span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;???&quot;</span>
+
+    <span class="c1"># print(defaults)</span>
+    <span class="k">if</span> <span class="n">defaults</span><span class="p">:</span>
+        <span class="n">hydra_defaults</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;_self_&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span>
+            <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">default</span><span class="p">}</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">default</span> <span class="ow">in</span> <span class="n">defaults</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">]</span>
+        <span class="n">hydra_store</span><span class="p">(</span>
+            <span class="n">build</span><span class="p">,</span>
+            <span class="n">group</span><span class="o">=</span><span class="n">group</span> <span class="o">+</span> <span class="n">name</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">func_or_cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="n">hydra_defaults</span><span class="o">=</span><span class="n">hydra_defaults</span><span class="p">,</span>
+            <span class="n">zen_dataclass</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">cls_name</span><span class="o">=</span><span class="n">func_or_cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">),</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">hydra_store</span><span class="p">(</span>
+            <span class="n">build</span><span class="p">,</span>
+            <span class="n">group</span><span class="o">=</span><span class="n">group</span> <span class="o">+</span> <span class="n">name</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">func_or_cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="n">to_config</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span>
+        <span class="p">)</span>
 
     <span class="c1"># Recursively store all subclasses so that they will be listed as options</span>
     <span class="k">for</span> <span class="n">sub_cls</span> <span class="ow">in</span> <span class="n">func_or_cls</span><span class="o">.</span><span class="n">__subclasses__</span><span class="p">():</span>
@@ -546,13 +575,14 @@
                 <span class="k">continue</span>
 
             <span class="c1"># Only store the type hint if it is a non-primitive</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">type_hint</span><span class="p">)</span>
             <span class="n">store</span><span class="p">(</span><span class="n">type_hint</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">)</span>
 
-            <span class="k">assert</span> <span class="n">param</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="n">param</span><span class="o">.</span><span class="n">empty</span><span class="p">,</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Parameter &#39;</span><span class="si">{</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; in &#39;</span><span class="si">{</span><span class="n">func_or_cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39; has a default &quot;</span>
-                <span class="s2">&quot;value. Default values are not supported for parameters with type &quot;</span>
-                <span class="s2">&quot;hints.&quot;</span>
-            <span class="p">)</span>
+            <span class="c1"># assert param.default is param.empty, (</span>
+            <span class="c1">#     f&quot;Parameter &#39;{param.name}&#39; in &#39;{func_or_cls.__name__}&#39; has a default &quot;</span>
+            <span class="c1">#     &quot;value. Default values are not supported for parameters with type &quot;</span>
+            <span class="c1">#     &quot;hints.&quot;</span>
+            <span class="c1"># )</span>
             <span class="n">defaults</span><span class="p">[</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;???&quot;</span>
 
     <span class="n">hydra_defaults</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;_self_&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span>
@@ -743,6 +773,8 @@
     <span class="n">config</span> <span class="o">=</span> <span class="n">OmegaConf</span><span class="o">.</span><span class="n">unsafe_merge</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">instantiate</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">hydra_config.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">HydraContainerConfig</span>
+
         <span class="k">return</span> <span class="n">HydraContainerConfig</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">config</span></div>
 
@@ -933,7 +965,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=f7cdbf68"></script>
+</div><script src="../../_static/documentation_options.js?v=a83ce22a"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>
