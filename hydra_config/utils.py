@@ -177,7 +177,7 @@ def store(
     *,
     name: str = "",
     group: str = "",
-    _recurse: bool = True,
+    _max_recursion: int = 10,
     **kwargs: Any,
 ) -> None:
     """Store a function or class in Hydra Zen's store with a specific group and name.
@@ -204,18 +204,18 @@ def store(
 
     # Recursively store all subclasses so that they will be listed as options
     for sub_cls in func_or_cls.__subclasses__():
-        store(sub_cls, name=name, group=group, _recurse=False)
+        store(sub_cls, name=name, group=group, _max_recursion=_max_recursion - 1)
 
         if not is_dataclass(sub_cls):
             continue
 
         for field in fields(sub_cls):
-            if _recurse:
+            if _max_recursion > 0:
                 store(
                     field.type,
                     name="",
                     group=group + name + "/" + field.name,
-                    _recurse=False,
+                    _max_recursion=_max_recursion - 1,
                 )
 
 
