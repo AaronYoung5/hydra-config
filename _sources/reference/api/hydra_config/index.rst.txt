@@ -326,7 +326,7 @@ Package Contents
    :keyword kwargs: Additional keyword arguments to pass to the instantiate function.
 
 
-.. py:function:: store(func_or_cls, /, *, name = '', group = '', build = True, **kwargs)
+.. py:function:: store(func_or_cls, /, *, name = '', group = '', _recurse = True, **kwargs)
 
    Store a function or class in Hydra Zen's store with a specific group and name.
 
@@ -335,8 +335,6 @@ Package Contents
                   an empty string.
                 * **group** (*str*) -- The group name to associate with the store entry. Defaults to an
                   empty string.
-                * **\*\*kwargs** (*Any*) -- Additional arguments passed to `zen.store`.
-
-   :returns: *Any | None* -- The stored entry, or `None` if the entry already exists.
+                * **\*\*kwargs** (*Any*) -- Additional arguments passed to :attr:`hydra_store`.
 
 

@@ -14,7 +14,7 @@
     <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <link rel="shortcut icon" href="../../_static/doc.png"/><!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
-        <title>hydra_config.cli - hydra-config 0.0.7 documentation</title>
+        <title>hydra_config.cli - hydra-config 0.0.7.post1.dev1+ge99e15e documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d75fae25" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
@@ -186,7 +186,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">hydra-config 0.0.7 documentation</div></a>
+      <a href="../../index.html"><div class="brand">hydra-config 0.0.7.post1.dev1+ge99e15e documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -285,11 +285,11 @@
 <span></span><span class="sd">&quot;&quot;&quot;Hydra Config CLI utilities.&quot;&quot;&quot;</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">FunctionType</span><span class="p">,</span> <span class="n">UnionType</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">get_type_hints</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">get_type_hints</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">hydra_zen</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">zen</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">hydra_config.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">builds</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">hydra_config.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">builds</span><span class="p">,</span> <span class="n">hydra_store</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_sanitize_type_hints</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">FunctionType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FunctionType</span><span class="p">:</span>
@@ -297,8 +297,9 @@
     <span class="n">sanitized_hints</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">hint</span> <span class="ow">in</span> <span class="n">original_hints</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">hint</span><span class="p">)</span> <span class="ow">is</span> <span class="n">UnionType</span><span class="p">:</span>
-            <span class="n">sanitized_hints</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="n">hint</span><span class="o">.</span><span class="n">__args__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">hint</span><span class="p">)</span> <span class="ow">is</span> <span class="n">UnionType</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span> <span class="ow">in</span> <span class="n">hint</span><span class="o">.</span><span class="n">__args__</span><span class="p">:</span>
+            <span class="n">hints_without_none</span> <span class="o">=</span> <span class="p">[</span><span class="n">h</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">hint</span><span class="o">.</span><span class="n">__args__</span> <span class="k">if</span> <span class="n">h</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)]</span>
+            <span class="n">sanitized_hints</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="o">*</span><span class="nb">tuple</span><span class="p">(</span><span class="n">hints_without_none</span><span class="p">)]]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">sanitized_hints</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="n">hint</span>
 
@@ -326,7 +327,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
         <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
-        <span class="n">zen</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="n">builds</span><span class="p">(</span><span class="n">_sanitize_type_hints</span><span class="p">(</span><span class="n">func</span><span class="p">)),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">hydra_store</span><span class="p">(</span><span class="n">builds</span><span class="p">(</span><span class="n">_sanitize_type_hints</span><span class="p">(</span><span class="n">func</span><span class="p">)),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">func</span>
 
@@ -348,8 +349,20 @@
     <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;config_name&quot;</span><span class="p">,</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
     <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;version_base&quot;</span><span class="p">,</span> <span class="s2">&quot;1.3&quot;</span><span class="p">)</span>
 
-    <span class="n">zen</span><span class="o">.</span><span class="n">store</span><span class="o">.</span><span class="n">add_to_hydra_store</span><span class="p">()</span>
-    <span class="n">zen</span><span class="o">.</span><span class="n">zen</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">hydra_main</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+    <span class="k">class</span><span class="w"> </span><span class="nc">ZenWrapper</span><span class="p">(</span><span class="n">zen</span><span class="o">.</span><span class="n">wrapper</span><span class="o">.</span><span class="n">Zen</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">instantiate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__c</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Overrides the default instantiation behavior to recursively convert</span>
+<span class="sd">            to objects.&quot;&quot;&quot;</span>
+            <span class="n">__c</span> <span class="o">=</span> <span class="n">zen</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span>
+                <span class="n">__c</span><span class="p">,</span>
+                <span class="n">_target_wrapper_</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_instantiation_wrapper</span><span class="p">,</span>
+                <span class="n">_recursive_</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">_convert_</span><span class="o">=</span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">__c</span>
+
+    <span class="n">zen</span><span class="o">.</span><span class="n">zen</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">ZenWrapper</span><span class="o">=</span><span class="n">ZenWrapper</span><span class="p">)</span><span class="o">.</span><span class="n">hydra_main</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 </pre></div>
         </article>
@@ -383,7 +396,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=bbaf98b3"></script>
+</div><script src="../../_static/documentation_options.js?v=2f00bb37"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>
