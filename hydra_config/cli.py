@@ -1,11 +1,11 @@
 """Hydra Config CLI utilities."""
 
 from types import FunctionType, UnionType
-from typing import Callable, get_type_hints
+from typing import Any, Callable, Optional, Union, get_type_hints
 
 import hydra_zen as zen
 
-from hydra_config.utils import builds
+from hydra_config.utils import builds, hydra_store
 
 
 def _sanitize_type_hints(func: FunctionType) -> FunctionType:
@@ -13,8 +13,9 @@ def _sanitize_type_hints(func: FunctionType) -> FunctionType:
     sanitized_hints = {}
 
     for param, hint in original_hints.items():
-        if type(hint) is UnionType:
-            sanitized_hints[param] = hint.__args__[0]
+        if type(hint) is UnionType and type(None) in hint.__args__:
+            hints_without_none = [h for h in hint.__args__ if h is not type(None)]
+            sanitized_hints[param] = Optional[Union[*tuple(hints_without_none)]]
         else:
             sanitized_hints[param] = hint
 
@@ -40,7 +41,7 @@ def register_cli(func: Callable | None = None, /, **kwargs) -> Callable:
 
     def wrapper(func: Callable) -> Callable:
         kwargs.setdefault("name", func.__name__)
-        zen.store(builds(_sanitize_type_hints(func)), **kwargs)
+        hydra_store(builds(_sanitize_type_hints(func)), **kwargs)
 
         return func
 
@@ -59,5 +60,17 @@ def run_cli(func: Callable, /, **kwargs) -> None:
     kwargs.setdefault("config_name", func.__name__)
     kwargs.setdefault("version_base", "1.3")
 
-    zen.store.add_to_hydra_store()
-    zen.zen(func).hydra_main(**kwargs)
+    class ZenWrapper(zen.wrapper.Zen):
+        def instantiate(self, __c: Any) -> Any:
+            """Overrides the default instantiation behavior to recursively convert
+            to objects."""
+            __c = zen.instantiate(
+                __c,
+                _target_wrapper_=self._instantiation_wrapper,
+                _recursive_=True,
+                _convert_="object",
+            )
+
+            return __c
+
+    zen.zen(func, ZenWrapper=ZenWrapper).hydra_main(**kwargs)

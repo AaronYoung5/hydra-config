@@ -3,10 +3,11 @@
 import argparse
 import enum
 import re
+from dataclasses import fields, is_dataclass
 from functools import partial
 from inspect import signature
 from pathlib import Path
-from typing import Any, Callable, Concatenate, Dict, List, Optional, Type
+from typing import TYPE_CHECKING, Any, Callable, Concatenate, Dict, List, Optional, Type
 
 import hydra
 import hydra_zen as zen
@@ -15,16 +16,27 @@ import RestrictedPython.Eval
 from hydra.core import global_hydra
 from hydra.utils import get_object
 from omegaconf import DictConfig, OmegaConf
-from omegaconf._utils import is_primitive_type_annotation
+from omegaconf._utils import (
+    _resolve_optional,
+    is_primitive_container,
+    is_primitive_type_annotation,
+)
 
-from hydra_config.config import HydraContainerConfig
+if TYPE_CHECKING:
+    from hydra_config.config import HydraContainerConfig
+
+# =============================================================================
+
+hydra_store = zen.ZenStore(
+    deferred_to_config=False, deferred_hydra_store=False, overwrite_ok=False
+)
 
 # =============================================================================
 
 
 def run_hydra(
     main_fn: Optional[
-        Callable[[Concatenate[HydraContainerConfig, ...]], None]
+        Callable[[Concatenate["HydraContainerConfig", ...]], None]
     ] = lambda *_, **__: None,
     /,
     *,
@@ -131,6 +143,8 @@ def run_hydra(
     @hydra.main(config_path=config_path, config_name=config_name, version_base=None)
     @hydra_argparse_override
     def main(config: DictConfig, instantiate: bool = instantiate, **fn_kwargs):
+        from hydra_config.config import HydraContainerConfig
+
         if instantiate:
             config = HydraContainerConfig.instantiate(config, **kwargs)
 
@@ -142,15 +156,30 @@ def run_hydra(
 # =============================================================================
 
 
+def _is_primitive(type_hint: Type) -> bool:
+    return (
+        not isinstance(type_hint, type)
+        or is_primitive_type_annotation(type_hint)
+        or is_primitive_container(type_hint)
+        or type_hint is Any
+    )
+
+
+def _get_entry(group: str | None = None, name: str | None = None) -> Any | None:
+    if (group, name) in hydra_store:
+        return hydra_store.get_entry(group, name)["node"]
+    return None
+
+
 def store(
     func_or_cls: Callable[..., Any] | Type[Any],
     /,
     *,
     name: str = "",
     group: str = "",
-    build: bool = True,
+    _recurse: bool = True,
     **kwargs: Any,
-) -> Any:
+) -> None:
     """Store a function or class in Hydra Zen's store with a specific group and name.
 
     Args:
@@ -159,29 +188,35 @@ def store(
             an empty string.
         group (str): The group name to associate with the store entry. Defaults to an
             empty string.
-        **kwargs (Any): Additional arguments passed to `zen.store`.
-
-    Returns:
-        Any | None: The stored entry, or `None` if the entry already exists.
+        **kwargs (Any): Additional arguments passed to :attr:`hydra_store`.
     """
-    if not build:
-        return zen.store(func_or_cls, group=group, name=func_or_cls.__name__, **kwargs)
+    if _is_primitive(func_or_cls):
+        # No need to store primitive types
+        return
 
-    if ((group + name, func_or_cls.__name__)) in zen.store:
-        return zen.store.get_entry(group + name, func_or_cls.__name__)["node"]
+    if _get_entry(group + name, func_or_cls.__name__) is not None:
+        # If the function or class is already stored, we don't need to store it again.
+        return
 
-    if (None, func_or_cls.__name__) in zen.store:
-        build = zen.store.get_entry(None, func_or_cls.__name__)["node"]
-    else:
+    if (build := _get_entry(name=func_or_cls.__name__)) is None:
         build = builds(func_or_cls, group=name + "/", **kwargs)
-    out = zen.store(build, group=group + name, name=func_or_cls.__name__)
+    hydra_store(build, group=group + name, name=func_or_cls.__name__)
 
-    if isinstance(func_or_cls, type):
-        if func_or_cls not in (str, int, float, bool):
-            for sub_cls in func_or_cls.__subclasses__():
-                store(sub_cls, name=name, group=group)
+    # Recursively store all subclasses so that they will be listed as options
+    for sub_cls in func_or_cls.__subclasses__():
+        store(sub_cls, name=name, group=group, _recurse=False)
 
-    return out
+        if not is_dataclass(sub_cls):
+            continue
+
+        for field in fields(sub_cls):
+            if _recurse:
+                store(
+                    field.type,
+                    name="",
+                    group=group + name + "/" + field.name,
+                    _recurse=False,
+                )
 
 
 def builds(
@@ -211,15 +246,22 @@ def builds(
 
         for param in sig.parameters.values():
             # Check if the parameter has a type hint
-            if param.annotation is not param.empty:
-                type_hint = param.annotation
-                if is_primitive_type_annotation(type_hint) or type_hint is Any:
-                    continue
+            if param.annotation is param.empty:
+                continue
 
-                # Only store the type hint if it is a non-primitive
-                store(type_hint, name=param.name, group=group)
+            _, type_hint = _resolve_optional(param.annotation)
+            if _is_primitive(type_hint):
+                continue
 
-                defaults[param.name] = "???"
+            # Only store the type hint if it is a non-primitive
+            store(type_hint, name=param.name, group=group)
+
+            assert param.default is param.empty, (
+                f"Parameter '{param.name}' in '{func_or_cls.__name__}' has a default "
+                "value. Default values are not supported for parameters with type "
+                "hints."
+            )
+            defaults[param.name] = "???"
 
     hydra_defaults = ["_self_"] + [
         {name: default} for name, default in defaults.items()

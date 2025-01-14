@@ -3,13 +3,15 @@
 import enum
 import types
 from copy import deepcopy
-from dataclasses import dataclass, field, fields, make_dataclass
+from dataclasses import MISSING, dataclass, field, fields, is_dataclass, make_dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Self, Tuple
 
 import hydra_zen as zen
 import yaml
-from omegaconf import MISSING, DictConfig, ListConfig, OmegaConf
+from omegaconf import DictConfig, ListConfig, OmegaConf
+
+from hydra_config.utils import hydra_store
 
 # =============================================================================
 
@@ -47,9 +49,15 @@ def config_wrapper(cls=None, /, **kwargs):
         # class.
         cls = dataclass(original_cls, **kwargs)
 
+        defaults: dict[str, str | dict[str, list[str] | str]] = {}
         new_fields = []
         for f in fields(cls):
-            # Ignore non-initialized fields
+            if (
+                is_dataclass(f.type)
+                and f.default is MISSING
+                and f.default_factory is MISSING
+            ):
+                defaults[f.name] = "???"
             new_fields.append((f.name, zen.DefaultBuilds._sanitized_type(f.type), f))
 
         # Create the new dataclass with the sanitized types
@@ -89,10 +97,14 @@ def config_wrapper(cls=None, /, **kwargs):
         hydrated_cls.__module__ = cls.__module__
 
         # Add to the hydra store
-        zen.store(
+        hydra_defaults = ["_self_"] + [
+            {name: default} for name, default in defaults.items()
+        ]
+        hydra_store(
             hydrated_cls,
             name=original_cls.__name__,
             zen_dataclass=dict(cls_name=original_cls.__name__),
+            hydra_defaults=hydra_defaults,
         )
 
         return hydrated_cls
@@ -314,7 +326,7 @@ class HydraContainerConfig:
             if "\n" in data:
                 # Will use the | style for multiline strings.
                 style = "|"
-            elif data == MISSING:
+            elif data == "???":
                 # Will wrap ??? in quotes, yaml doesn't like this otherwise
                 style = '"'
             return dumper.represent_scalar("tag:yaml.org,2002:str", data, style=style)
