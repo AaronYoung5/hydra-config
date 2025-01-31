@@ -211,7 +211,6 @@ def store(
             ):
                 defaults[field.name] = "???"
 
-    # print(defaults)
     if defaults:
         hydra_defaults = ["_self_"] + [
             {name: default} for name, default in defaults.items()
