@@ -5,7 +5,7 @@ import types
 from copy import deepcopy
 from dataclasses import dataclass, field, fields, make_dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Self, Tuple
+from typing import Any, Dict, Generic, List, Optional, Self, Tuple
 
 import hydra_zen as zen
 import yaml
@@ -54,7 +54,7 @@ def config_wrapper(cls=None, /, **kwargs):
             new_fields.append((f.name, zen.DefaultBuilds._sanitized_type(f.type), f))
 
         # Create the new dataclass with the sanitized types
-        kwargs["bases"] = cls.__bases__
+        kwargs["bases"] = tuple(b for b in cls.__bases__ if b is not Generic)
         hydrated_cls = make_dataclass(cls.__name__, new_fields, **kwargs)
 
         # Copy over custom methods from the original class
@@ -88,6 +88,10 @@ def config_wrapper(cls=None, /, **kwargs):
         # TODO submit bug report on cloudpickle. #386 is fixed, but _MISSED_TYPE is
         # still an issue.
         hydrated_cls.__module__ = cls.__module__
+
+        # Add back __parameters__ to the new class if it exists
+        if hasattr(original_cls, "__parameters__"):
+            hydrated_cls.__parameters__ = cls.__parameters__
 
         # Add to the hydra store
         hydra_store(hydrated_cls, name=original_cls.__name__, to_config=lambda x: x)
