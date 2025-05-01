@@ -282,15 +282,15 @@ def builds(
                 continue
 
             # Only store the type hint if it is a non-primitive
-            print(param.name, type_hint)
             store(type_hint, name=param.name, group=group)
 
-            # assert param.default is param.empty, (
-            #     f"Parameter '{param.name}' in '{func_or_cls.__name__}' has a default "
-            #     "value. Default values are not supported for parameters with type "
-            #     "hints."
-            # )
-            defaults[param.name] = "???"
+            assert param.default is param.empty or param.default is None, (
+                f"Parameter '{param.name}' in '{func_or_cls.__name__}' has a default "
+                "value. Default values are not supported for parameters with type "
+                "hints."
+            )
+            default = None if param.default is None else "???"
+            defaults[param.name] = default
 
     hydra_defaults = ["_self_"] + [
         {name: default} for name, default in defaults.items()
