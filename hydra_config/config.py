@@ -93,6 +93,10 @@ def config_wrapper(cls=None, /, **kwargs):
         if hasattr(original_cls, "__parameters__"):
             hydrated_cls.__parameters__ = cls.__parameters__
 
+        # Preserve abstractness
+        if hasattr(original_cls, "__abstractmethods__"):
+            hydrated_cls.__abstractmethods__ = original_cls.__abstractmethods__.copy()
+
         # Add to the hydra store
         hydra_store(hydrated_cls, name=original_cls.__name__, to_config=lambda x: x)
 
