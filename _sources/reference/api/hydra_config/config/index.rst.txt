@@ -69,6 +69,13 @@ Module Contents
       files) where you want to store data that is not necessarily defined in the config.
 
 
+   .. py:method:: __post_init__()
+
+      Define a post init method. If not, derived classes won't be able to
+      implement their own __post_init__ method for some reason.
+
+
+
    .. py:method:: instantiate(config, *, _convert_ = 'object', **kwargs)
       :classmethod:
 

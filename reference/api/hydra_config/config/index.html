@@ -15,7 +15,7 @@
     <link rel="index" title="Index" href="../../../../genindex.html" /><link rel="search" title="Search" href="../../../../search.html" /><link rel="next" title="hydra_config.resolvers" href="../resolvers/index.html" /><link rel="prev" title="hydra_config.cli" href="../cli/index.html" />
 
     <link rel="shortcut icon" href="../../../../_static/doc.png"/><!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
-        <title>hydra_config.config - hydra-config 0.0.13 documentation</title>
+        <title>hydra_config.config - hydra-config 0.0.14 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d75fae25" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -187,7 +187,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">hydra-config 0.0.13 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">hydra-config 0.0.14 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -359,6 +359,13 @@ as printing the config as a yaml string.</p>
 <span class="sig-name descname"><span class="pre">custom</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="reference internal" href="../../../../_modules/hydra_config/config.html#HydraContainerConfig.custom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydra_config.config.HydraContainerConfig.custom" title="Link to this definition">¶</a></dt>
 <dd><p>Custom data to use. This is useful for code-specific logic (i.e. not in yaml
 files) where you want to store data that is not necessarily defined in the config.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydra_config.config.HydraContainerConfig.__post_init__">
+<span class="sig-name descname"><span class="pre">__post_init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/hydra_config/config.html#HydraContainerConfig.__post_init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydra_config.config.HydraContainerConfig.__post_init__" title="Link to this definition">¶</a></dt>
+<dd><p>Define a post init method. If not, derived classes won’t be able to
+implement their own __post_init__ method for some reason.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -566,6 +573,7 @@ this will return the default string representation of the object.</p>
 <li><a class="reference internal" href="#hydra_config.config.HydraContainerConfig"><code class="docutils literal notranslate"><span class="pre">HydraContainerConfig</span></code></a><ul>
 <li><a class="reference internal" href="#hydra_config.config.HydraContainerConfig.config"><code class="docutils literal notranslate"><span class="pre">HydraContainerConfig.config</span></code></a></li>
 <li><a class="reference internal" href="#hydra_config.config.HydraContainerConfig.custom"><code class="docutils literal notranslate"><span class="pre">HydraContainerConfig.custom</span></code></a></li>
+<li><a class="reference internal" href="#hydra_config.config.HydraContainerConfig.__post_init__"><code class="docutils literal notranslate"><span class="pre">HydraContainerConfig.__post_init__()</span></code></a></li>
 <li><a class="reference internal" href="#hydra_config.config.HydraContainerConfig.instantiate"><code class="docutils literal notranslate"><span class="pre">HydraContainerConfig.instantiate()</span></code></a></li>
 <li><a class="reference internal" href="#hydra_config.config.HydraContainerConfig.compose"><code class="docutils literal notranslate"><span class="pre">HydraContainerConfig.compose()</span></code></a></li>
 <li><a class="reference internal" href="#hydra_config.config.HydraContainerConfig.load"><code class="docutils literal notranslate"><span class="pre">HydraContainerConfig.load()</span></code></a></li>
@@ -592,7 +600,7 @@ this will return the default string representation of the object.</p>
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=9fc46840"></script>
+</div><script src="../../../../_static/documentation_options.js?v=544df88d"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/scripts/furo.js?v=5fa4622c"></script>
