@@ -123,6 +123,11 @@ class HydraContainerConfig:
     files) where you want to store data that is not necessarily defined in the config.
     """
 
+    def __post_init__(self):
+        """Define a post init method. If not, derived classes won't be able to
+        implement their own __post_init__ method for some reason."""
+        pass
+
     @classmethod
     def instantiate(
         cls,
