@@ -200,6 +200,12 @@ Package Contents
 
 
 
+   .. py:method:: to_dict(*, resolve = True, throw_on_missing = True, **kwargs)
+
+      Convert the config to a dictionary.
+
+
+
    .. py:method:: __getstate__()
 
       This is used to pickle the object. We'll return the config as the state.

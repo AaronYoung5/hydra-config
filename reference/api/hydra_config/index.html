@@ -15,7 +15,7 @@
     <link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="hydra_config.cli" href="cli/index.html" /><link rel="prev" title="API Reference" href="../../index.html" />
 
     <link rel="shortcut icon" href="../../../_static/doc.png"/><!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
-        <title>hydra_config - hydra-config 0.0.14 documentation</title>
+        <title>hydra_config - hydra-config 0.0.15 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d75fae25" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -187,7 +187,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">hydra-config 0.0.14 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">hydra-config 0.0.15 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -564,6 +564,12 @@ this will return the default string representation of the object.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="hydra_config.HydraContainerConfig.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolve</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">throw_on_missing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/hydra_config/config.html#HydraContainerConfig.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydra_config.HydraContainerConfig.to_dict" title="Link to this definition">¶</a></dt>
+<dd><p>Convert the config to a dictionary.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="hydra_config.HydraContainerConfig.__getstate__">
 <span class="sig-name descname"><span class="pre">__getstate__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/hydra_config/config.html#HydraContainerConfig.__getstate__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydra_config.HydraContainerConfig.__getstate__" title="Link to this definition">¶</a></dt>
 <dd><p>This is used to pickle the object. We’ll return the config as the state.</p>
@@ -808,6 +814,7 @@ empty string.</p></li>
 <li><a class="reference internal" href="#hydra_config.HydraContainerConfig.copy"><code class="docutils literal notranslate"><span class="pre">HydraContainerConfig.copy()</span></code></a></li>
 <li><a class="reference internal" href="#hydra_config.HydraContainerConfig.save"><code class="docutils literal notranslate"><span class="pre">HydraContainerConfig.save()</span></code></a></li>
 <li><a class="reference internal" href="#hydra_config.HydraContainerConfig.to_yaml"><code class="docutils literal notranslate"><span class="pre">HydraContainerConfig.to_yaml()</span></code></a></li>
+<li><a class="reference internal" href="#hydra_config.HydraContainerConfig.to_dict"><code class="docutils literal notranslate"><span class="pre">HydraContainerConfig.to_dict()</span></code></a></li>
 <li><a class="reference internal" href="#hydra_config.HydraContainerConfig.__getstate__"><code class="docutils literal notranslate"><span class="pre">HydraContainerConfig.__getstate__()</span></code></a></li>
 <li><a class="reference internal" href="#hydra_config.HydraContainerConfig.__setstate__"><code class="docutils literal notranslate"><span class="pre">HydraContainerConfig.__setstate__()</span></code></a></li>
 <li><a class="reference internal" href="#hydra_config.HydraContainerConfig.__str__"><code class="docutils literal notranslate"><span class="pre">HydraContainerConfig.__str__()</span></code></a></li>
@@ -835,7 +842,7 @@ empty string.</p></li>
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=544df88d"></script>
+</div><script src="../../../_static/documentation_options.js?v=f0357c94"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=5fa4622c"></script>
