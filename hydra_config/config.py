@@ -3,7 +3,7 @@
 import enum
 import types
 from copy import deepcopy
-from dataclasses import dataclass, field, fields, make_dataclass
+from dataclasses import asdict, dataclass, field, fields, make_dataclass
 from pathlib import Path
 from typing import Any, Dict, Generic, List, Optional, Self, Tuple
 
@@ -348,6 +348,19 @@ class HydraContainerConfig:
             sort_keys=False,
             Dumper=dumper,
         )
+
+    def to_dict(
+        self, *, resolve: bool = True, throw_on_missing: bool = True, **kwargs
+    ) -> dict:
+        """Convert the config to a dictionary."""
+        if self.config is not None:
+            return OmegaConf.to_container(
+                self.config,
+                resolve=resolve,
+                throw_on_missing=throw_on_missing,
+                **kwargs,
+            )
+        return asdict(self)
 
     def __getstate__(self) -> DictConfig:
         """This is used to pickle the object. We'll return the config as the state."""
